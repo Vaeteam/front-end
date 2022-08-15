@@ -1,3 +1,7 @@
+<script setup lang="ts">
+
+</script>
+
 <template>
     <section class="p-0 d-flex align-items-center position-relative overflow-hidden">
 		<div class="container-fluid">
@@ -115,4 +119,3 @@
 		</div>
 	</section>
 </template>
-
