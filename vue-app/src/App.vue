@@ -1,14 +1,14 @@
 <!-- eslint-disable prettier/prettier -->
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import Navbar from './components/NavBar.vue'
 </script>
 
 <template>
-  <div class="badge bg-success bg-opacity-10 text-success">
-    Hello World
-  </div>
+  <Navbar></Navbar>
+  <RouterView></RouterView>
 </template>
 
 <style scoped>
+
 </style>
