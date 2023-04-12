@@ -1,12 +1,10 @@
 <!-- eslint-disable prettier/prettier -->
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import Navbar from './components/NavBar.vue'
+import ComingSoon from './views/ComingSoon.vue'
 </script>
 
 <template>
-  <Navbar></Navbar>
-  <RouterView></RouterView>
+    <ComingSoon></ComingSoon>
 </template>
 
 <style scoped>
