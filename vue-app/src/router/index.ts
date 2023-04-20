@@ -1,25 +1,65 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable prettier/prettier */
-import { createRouter, createWebHistory } from 'vue-router'
-// @ts-ignore
-import App from '../App.vue'
-import LogInView from '../views/LogInView.vue'
-import AboutView from '../views/AboutView.vue'
+import { createRouter, createWebHistory } from "vue-router";
+// import Layout
+import LayoutWithNavbar from "../layout/LayoutWithNavbar.vue";
+import LayoutWithoutNavbar from "../layout/LayoutWithoutNavbar.vue";
+// import View
+import LogInView from "../views/Auth/LogInView.vue";
+import SignUpView from "../views/Auth/SignUpView.vue";
+import ResetPasswordView from "@/views/Auth/ResetPasswordView.vue";
+import ForgotPasswordView from "@/views/Auth/ForgotPasswordView.vue";
+import AboutView from "../views/AboutView.vue";
+import HomeView from "../views/HomeView.vue";
+import ProfileView from "@/views/Profile/ProfileView.vue";
+import ListTeacherView from "@/views/ListTeacherView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/about',
-      name: 'about',
-      component: AboutView
+      path: "/",
+      component: LayoutWithNavbar,
+      children: [
+        {
+          path: "",
+          component: HomeView,
+        },
+        {
+          path: "about",
+          component: AboutView,
+        },
+        {
+          path: "profile",
+          component: ProfileView,
+        },
+        {
+          path: "list-teacher",
+          component: ListTeacherView,
+        },
+      ],
     },
     {
-      path: '/login',
-      name: 'login',
-      component: LogInView
-    }
-  ]
-})
+      path: "/auth",
+      component: LayoutWithoutNavbar,
+      children: [
+        {
+          path: "login",
+          component: LogInView,
+        },
+        {
+          path: "sign-up",
+          component: SignUpView,
+        },
+        {
+          path: "reset-password",
+          component: ResetPasswordView,
+        },
+        {
+          path: "forgot-password",
+          component: ForgotPasswordView,
+        },
+      ],
+    },
+  ],
+});
 
-export default router
+export default router;
