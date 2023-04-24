@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 // import Layout
 import LayoutWithNavbar from "../layout/LayoutWithNavbar.vue";
 import LayoutWithoutNavbar from "../layout/LayoutWithoutNavbar.vue";
+import LayoutAuth from "@/layout/LayoutAuth.vue";
 // import View
 import LogInView from "../views/Auth/LogInView.vue";
 import SignUpView from "../views/Auth/SignUpView.vue";
@@ -39,7 +40,7 @@ const router = createRouter({
     },
     {
       path: "/auth",
-      component: LayoutWithoutNavbar,
+      component: LayoutAuth,
       children: [
         {
           path: "login",
