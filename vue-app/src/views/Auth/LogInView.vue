@@ -1,8 +1,60 @@
 <script setup lang="ts">
-import { RouterLink } from "vue-router";
-function loginGoogle() {
-  console.log('login google');
+import { ref, onMounted } from 'vue';
+import { RouterLink, useRoute } from "vue-router";
+import authService from "@/service/auth.service";
+import { useUserStore } from "@/stores/user";
+import InputError from '@/components/InputError.vue';
+import router from '@/router';
+
+const route = useRoute()
+const userStore = useUserStore();
+const isLoading = ref(false);
+const user = ref({
+  email: "",
+  password: "",
+});
+
+const messageError = ref({
+  email: [],
+  password: [],
+  data: "" 
+});
+
+const messageSuccess = ref("");
+
+onMounted(() => {
+  const { success, message, code, state } = route.query;
+  if(success === 'true') {
+    messageSuccess.value = message ? message as string : "";
+  } else if ( success === 'false' ) {
+    messageError.value.data = message ? message as string : "";
+  }
+})
+
+const loginNormal = async () => {
+  try{
+    isLoading.value = true;
+    const response = await authService.signIn(user.value);
+    const { access_token, refresh_token } = response.data;
+    userStore.login(access_token, refresh_token, { email: user.value.email });
+    messageError.value = {
+      email: [],
+      password: [],
+      data: "" 
+    }
+    router.push('/');
+  } catch (error: any) {
+    messageError.value = {
+      email: [],
+      password: [],
+      data: "" 
+    }
+    
+    messageError.value = {...messageError.value, ...error.response.data.data};
+  }
+  isLoading.value = false;
 }
+
 function loginFacebook() {
   console.log('login facebook');
 }
@@ -16,28 +68,34 @@ function loginFacebook() {
         <span class="mb-0 fs-1">👋</span>
         <h1 class="fs-2">Login into Eduport!</h1>
         <p class="lead mb-4">Nice to see you! Please log in with your account.</p>
-
+        <p class="lead mb-4 text-center text-black" v-if="messageSuccess">
+          <font-awesome-icon icon="fa-solid fa-check-circle" class="text-success"/>
+          {{ messageSuccess }}
+        </p>
+        <p class="mb-4 text-center text-danger" v-if="messageError.data">{{ messageError.data }}</p>
         <!-- Form START -->
-        <form>
+        <form @submit.prevent="loginNormal" :disabled="isLoading">
           <!-- Email -->
           <div class="mb-4">
             <label for="exampleInputEmail1" class="form-label">Email address *</label>
             <div class="input-group input-group-lg">
-              <span class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><font-awesome-icon
+              <span class="input-group-text rounded-start border-0 text-secondary px-3" :class="isLoading ? 'bg-muted' : 'bg-light'"><font-awesome-icon
                   icon="fa-solid fa-envelope" /></span>
-              <input type="email" class="form-control border-0 bg-light rounded-end ps-1" placeholder="E-mail"
-                id="exampleInputEmail1" required>
+              <input type="email" class="form-control border-0 rounded-end ps-1" :class="isLoading ? 'bg-muted' : 'bg-light'" placeholder="E-mail"
+                id="exampleInputEmail1" required v-model="user.email" :disabled="isLoading">
             </div>
+            <InputError :error-list="messageError.email"></InputError>
           </div>
           <!-- Password -->
           <div class="mb-4">
             <label for="inputPassword5" class="form-label">Password *</label>
             <div class="input-group input-group-lg">
-              <span class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><font-awesome-icon
+              <span class="input-group-text rounded-start border-0 text-secondary px-3" :class="isLoading ? 'bg-muted' : 'bg-light'"><font-awesome-icon
                   icon="fa-solid fa-lock" /></span>
-              <input type="password" class="form-control border-0 bg-light rounded-end ps-1" placeholder="password"
-                id="inputPassword5" required>
+              <input type="password" class="form-control border-0 rounded-end ps-1" :class="isLoading ? 'bg-muted' : 'bg-light'" placeholder="password"
+                id="inputPassword5" required v-model="user.password" :disabled="isLoading">
             </div>
+            <InputError :error-list="messageError.password"></InputError>
           </div>
           <!-- Check box -->
           <div class="mb-4 d-flex justify-content-between mb-4">
@@ -54,7 +112,7 @@ function loginFacebook() {
           <!-- Button -->
           <div class="align-items-center mt-0">
             <div class="d-grid">
-              <button class="btn btn-primary mb-0" type="button">Login</button>
+              <button class="btn btn-primary mb-0" type="submit" :disabled="isLoading">Login</button>
             </div>
           </div>
         </form>
