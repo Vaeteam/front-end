@@ -1,17 +1,17 @@
 <script setup lang="ts">
     import Post from "./Post.vue";
     import PostService from "@/service/post.service";
-    import { ref } from 'vue'
 
     let items = PostService.getPage(0).data;
-
-
 </script>
 <template>
     <div class="col-xl-9 col-xxl-8">
         <!-- Course list START -->
         <div class="row g-4">
-            <Post v-for="item in items"></Post>
+            <Post v-for="item in items"
+            :id="item.id"
+            :title="item.title"
+            ></Post>
         </div>
     </div>
 </template>

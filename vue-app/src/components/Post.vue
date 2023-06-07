@@ -1,4 +1,11 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+    import { defineProps } from 'vue';
+
+    const pros = defineProps({
+        id: {type: Number, require: true},
+        title: {type: String, default: "defailt title"}
+    }) 
+</script>
 
 <template>
     <!-- Card list START -->
@@ -6,7 +13,7 @@
     <div class="card shadow overflow-hidden p-2">
         <div class="row g-0">
             <div class="col-md-5 overflow-hidden">
-                <img src="assets/images/courses/4by3/06.jpg" class="rounded-2" alt="Card image">
+                <img src="@/assets/images/courses/4by3/06.jpg" class="rounded-2" alt="Card image">
                 <!-- Ribbon -->
                 <div class="card-img-overlay">
                     <div class="ribbon"><span>Free</span></div>
@@ -26,7 +33,7 @@
                     </div>
 
                     <!-- Title -->
-                    <h5 class="card-title"><a href="#">Angular – The Complete Guider</a></h5>
+                    <h5 class="card-title"><a href="#">{{ pros.title }}</a></h5>
                     <p class="text-truncate-2 d-none d-lg-block">Satisfied conveying a dependent contented he gentleman agreeable do be. dependent contented he</p>
 
                     <!-- Info -->
@@ -41,7 +48,7 @@
                         <!-- Avatar -->
                         <div class="d-flex align-items-center">
                             <div class="avatar">
-                                <img class="avatar-img rounded-circle" src="assets/images/avatar/06.jpg" alt="avatar">
+                                <img class="avatar-img rounded-circle" src="@/assets/images/avatar/06.jpg" alt="avatar">
                             </div>
                             <p class="mb-0 ms-2"><a href="#" class="h6 fw-light">Jacqueline Miller</a></p>
                         </div>
