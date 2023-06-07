@@ -1,10 +1,10 @@
 <script setup lang="ts">
     import { defineProps } from 'vue';
+    import type { PostInterface } from '@/interfaces/post.interface'
 
-    const pros = defineProps({
-        id: {type: Number, require: true},
-        title: {type: String, default: "defailt title"}
-    }) 
+    const pros = defineProps<{
+        post: PostInterface
+    }>() 
 </script>
 
 <template>
@@ -33,7 +33,7 @@
                     </div>
 
                     <!-- Title -->
-                    <h5 class="card-title"><a href="#">{{ pros.title }}</a></h5>
+                    <h5 class="card-title"><a href="#">{{ pros.post.title }}</a></h5>
                     <p class="text-truncate-2 d-none d-lg-block">Satisfied conveying a dependent contented he gentleman agreeable do be. dependent contented he</p>
 
                     <!-- Info -->
