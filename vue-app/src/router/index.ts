@@ -25,7 +25,6 @@ const router = createRouter({
         {
           path: "",
           component: HomeView,
-          meta: { requireAuth: true }
         },
         {
           path: "about",
@@ -34,12 +33,10 @@ const router = createRouter({
         {
           path: "profile",
           component: ProfileView,
-          meta: { requireAuth: true }
         },
         {
           path: "list-teacher",
           component: ListTeacherView,
-          meta: { requireAuth: true }
         },
       ],
     },
