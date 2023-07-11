@@ -11,10 +11,21 @@ import AboutView from "../views/AboutView.vue";
 import HomeView from "../views/HomeView.vue";
 import ProfileView from "@/views/Profile/ProfileView.vue";
 import ListTeacherView from "@/views/ListTeacherView.vue";
+import CreatePost from "@/views/Post/CreatePost.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: "/post",
+      children: [
+        {
+          path: "create",
+          name: "create-post",
+          component: CreatePost
+        }
+      ]
+    },
     {
       path: "/",
       component: LayoutWithNavbar,
