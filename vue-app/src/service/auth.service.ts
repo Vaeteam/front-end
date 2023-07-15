@@ -48,7 +48,7 @@ class AuthService {
   }
 
   async signInFacebook(payload: SignInGooglePayload): Promise<any> {
-    const response = await apiService.post('/social_auth/google/', payload);
+    const response = await apiService.post('/social_auth/facebook/', payload);
     return response.data;
   }
 

@@ -5,6 +5,7 @@ import authService from "@/service/auth.service";
 import { useUserStore } from "@/stores/user";
 import InputError from '@/components/InputError.vue';
 import router from '@/router';
+import axios from "axios";
 
 const route = useRoute()
 const userStore = useUserStore();
@@ -23,6 +24,7 @@ const messageError = ref({
 const messageSuccess = ref("");
 
 onMounted(() => {
+  initializeFacebookSDK()
   const { success, message, code, state } = route.query;
   if(success === 'true') {
     messageSuccess.value = message ? message as string : "";
@@ -55,8 +57,70 @@ const loginNormal = async () => {
   isLoading.value = false;
 }
 
-function loginFacebook() {
-  console.log('login facebook');
+const initializeFacebookSDK = () => {
+  // Xử lý sự kiện tải SDK của Facebook
+  window.fbAsyncInit = () => {
+    FB.init({
+      appId            : '941220900526368',
+      autoLogAppEvents : true,
+      xfbml            : true,
+      version: 'v17.0'
+    });
+  };
+
+  // Tải SDK của Facebook
+  (function (d, s, id) {
+    var js,
+      fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) {
+      return;
+    }
+    js = d.createElement(s);
+    js.id = id;
+    js.src =
+      'https://connect.facebook.net/en_US/sdk.js';
+    fjs.parentNode.insertBefore(js, fjs);
+  })(document, 'script', 'facebook-jssdk');
+}
+
+const loginGoogle = async (response: any) => {
+  const { code } = response;
+  const payload = {
+    auth_token: code
+  }
+  const res = await authService.signInGoogle(payload);
+  console.log(res)
+}
+
+const loginFacebook = () => {
+  FB.login((response: any) => {
+    console.log(response)
+    if (response.authResponse) {
+      const { accessToken, userID } = response.authResponse;
+      const payload = {
+        auth_token: accessToken
+      }
+      // deleteUserConnection(userID, accessToken);
+      // authService.signInFacebook(payload)
+      //   .then((res) => {
+      //     console.log(res)
+      //   })
+      //   .catch((err) => {
+      //     // FB.logout()
+      //   })
+    }
+  });
+}
+
+const deleteUserConnection = (userId: any, accessToken: any) => {
+  const url = `https://graph.facebook.com/v17.0/${userId}/permissions?access_token=${accessToken}`;
+  axios.delete(url)
+    .then(response => {
+      console.log('User connection deleted:', response.data);
+    })
+    .catch(error => {
+      console.error('Error deleting user connection:', error);
+    });
 }
 </script>
 
@@ -128,8 +192,8 @@ function loginFacebook() {
 
           <!-- Social btn -->
           <div class="col-xxl-6 d-grid">
-            <button @click="loginGoogle" class="btn bg-google mb-2 mb-xxl-0"><font-awesome-icon class="me-2"
-                icon="fa-brands fa-google" />Login with Google</button>
+            <GoogleLogin class="btn bg-google mb-2 mb-xxl-0" :callback="loginGoogle" prompt><font-awesome-icon class="me-2"
+                icon="fa-brands fa-google" />Login with Google</GoogleLogin>
           </div>
           <!-- Social btn -->
           <div class="col-xxl-6 d-grid">
