@@ -85,12 +85,12 @@ router.beforeEach((to, from, next) => {
   }
   
   if (!requireAuth) {
-    if(isLoggedIn) {
+    if(isLoggedIn && to.path.includes('auth')) {
       return next('/');
     }
 
     const isLoggedInLocalStorage = userStore.isLoggedInLocalStorage;
-    if(isLoggedInLocalStorage) {
+    if(isLoggedInLocalStorage && to.path.includes('auth')) {
       return next('/');
     }
     return next();

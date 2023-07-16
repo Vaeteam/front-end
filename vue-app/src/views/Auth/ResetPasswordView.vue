@@ -36,7 +36,6 @@ const resetPassword = async () => {
       message: response.message
     }
   } catch (error: any) {
-    console.log(error);
     if(error.response.status === 400) {
       messageError.value = {
         password: [],

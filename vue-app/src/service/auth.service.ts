@@ -18,6 +18,10 @@ interface SignInGooglePayload {
   auth_token: string;
 }
 
+interface SignInFacebookPayload {
+  fb_access_token: string;
+}
+
 interface ResetPassPayload {
   email: string;
 }
@@ -47,7 +51,7 @@ class AuthService {
     return response.data;
   }
 
-  async signInFacebook(payload: SignInGooglePayload): Promise<any> {
+  async signInFacebook(payload: SignInFacebookPayload): Promise<any> {
     const response = await apiService.post('/social_auth/facebook/', payload);
     return response.data;
   }

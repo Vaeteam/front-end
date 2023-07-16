@@ -5,7 +5,6 @@ import authService from "@/service/auth.service";
 import { useUserStore } from "@/stores/user";
 import InputError from '@/components/InputError.vue';
 import router from '@/router';
-import axios from "axios";
 
 const route = useRoute()
 const userStore = useUserStore();
@@ -21,11 +20,19 @@ const messageError = ref({
   data: "" 
 });
 
+const clearMessageError = () => {
+  messageError.value = {
+    email: [],
+    password: [],
+    data: "" 
+  }
+}
+
 const messageSuccess = ref("");
 
 onMounted(() => {
   initializeFacebookSDK()
-  const { success, message, code, state } = route.query;
+  const { success, message } = route.query;
   if(success === 'true') {
     messageSuccess.value = message ? message as string : "";
   } else if ( success === 'false' ) {
@@ -37,21 +44,10 @@ const loginNormal = async () => {
   try{
     isLoading.value = true;
     const response = await authService.signIn(user.value);
-    const { access_token, refresh_token } = response.data;
-    userStore.login(access_token, refresh_token, { email: user.value.email });
-    messageError.value = {
-      email: [],
-      password: [],
-      data: "" 
-    }
-    router.push('/');
+    clearMessageError();
+    saveLoginInfo(response.data);
   } catch (error: any) {
-    messageError.value = {
-      email: [],
-      password: [],
-      data: "" 
-    }
-    
+    clearMessageError();
     messageError.value = {...messageError.value, ...error.response.data.data};
   }
   isLoading.value = false;
@@ -84,43 +80,45 @@ const initializeFacebookSDK = () => {
 }
 
 const loginGoogle = async (response: any) => {
-  const { code } = response;
-  const payload = {
-    auth_token: code
+  try {
+    const { code } = response;
+    const payload = {
+      auth_token: code
+    }
+    const res = await authService.signInGoogle(payload);
+    clearMessageError();
+    saveLoginInfo(res)
+  } catch (error: any) {
+    clearMessageError();
+    messageError.value = {...messageError.value, ...error.response.data.data};
   }
-  const res = await authService.signInGoogle(payload);
-  console.log(res)
 }
 
 const loginFacebook = () => {
   FB.login((response: any) => {
     console.log(response)
     if (response.authResponse) {
-      const { accessToken, userID } = response.authResponse;
+      const { accessToken } = response.authResponse;
       const payload = {
-        auth_token: accessToken
+        fb_access_token: accessToken
       }
-      // deleteUserConnection(userID, accessToken);
-      // authService.signInFacebook(payload)
-      //   .then((res) => {
-      //     console.log(res)
-      //   })
-      //   .catch((err) => {
-      //     // FB.logout()
-      //   })
+      authService.signInFacebook(payload)
+        .then((res) => {
+          clearMessageError();
+          saveLoginInfo(res)
+        })
+        .catch((error: any) => {
+          clearMessageError();
+          messageError.value = {...messageError.value, ...error.response.data.data};
+        })
     }
   });
 }
 
-const deleteUserConnection = (userId: any, accessToken: any) => {
-  const url = `https://graph.facebook.com/v17.0/${userId}/permissions?access_token=${accessToken}`;
-  axios.delete(url)
-    .then(response => {
-      console.log('User connection deleted:', response.data);
-    })
-    .catch(error => {
-      console.error('Error deleting user connection:', error);
-    });
+const saveLoginInfo = (res: any) => {
+  const { access_token, refresh_token } = res;
+  userStore.login(access_token, refresh_token);
+  router.push('/');
 }
 </script>
 
