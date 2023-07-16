@@ -53,7 +53,7 @@ const router = createRouter({
           component: SignUpView,
         },
         {
-          path: "%5Eemail/account/reset/:token1/:token2/:symbol",
+          path: "email/account/reset/:token1/:token2",
           component: ResetPasswordView,
         },
         {
@@ -61,7 +61,7 @@ const router = createRouter({
           component: ForgotPasswordView,
         },
         {
-          path: "%5Eemail/confirmation/activate/:token1/:token2/:symbol",
+          path: "email/confirmation/activate/:token1/:token2",
           component: ActiveAccount,
         },
       ],
