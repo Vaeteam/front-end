@@ -6,6 +6,8 @@ import { useUserStore } from "@/stores/user";
 import InputError from '@/components/InputError.vue';
 import router from '@/router';
 
+declare const FB: any;
+
 const route = useRoute()
 const userStore = useUserStore();
 const isLoading = ref(false);
@@ -31,6 +33,9 @@ const clearMessageError = () => {
 const messageSuccess = ref("");
 
 onMounted(() => {
+  if (typeof FB !== 'undefined') {
+        initializeFacebookSDK();
+  }
   initializeFacebookSDK()
   const { success, message } = route.query;
   if(success === 'true') {
@@ -55,7 +60,7 @@ const loginNormal = async () => {
 
 const initializeFacebookSDK = () => {
   // Xử lý sự kiện tải SDK của Facebook
-  window.fbAsyncInit = () => {
+  (window as any).fbAsyncInit = () => {
     FB.init({
       appId            : '941220900526368',
       autoLogAppEvents : true,
@@ -66,15 +71,15 @@ const initializeFacebookSDK = () => {
 
   // Tải SDK của Facebook
   (function (d, s, id) {
-    var js,
-      fjs = d.getElementsByTagName(s)[0];
+    var js: any,
+      fjs: any = d.getElementsByTagName(s)[0];
     if (d.getElementById(id)) {
       return;
     }
     js = d.createElement(s);
     js.id = id;
     js.src =
-      'https://connect.facebook.net/en_US/sdk.js';
+        'https://connect.facebook.net/en_US/sdk.js';
     fjs.parentNode.insertBefore(js, fjs);
   })(document, 'script', 'facebook-jssdk');
 }
