@@ -6,8 +6,6 @@ import { useUserStore } from "@/stores/user";
 import InputError from '@/components/InputError.vue';
 import router from '@/router';
 
-let FB: any;
-
 const route = useRoute()
 const userStore = useUserStore();
 const isLoading = ref(false);
@@ -33,9 +31,6 @@ const clearMessageError = () => {
 const messageSuccess = ref("");
 
 onMounted(() => {
-  if (typeof FB !== 'undefined') {
-        initializeFacebookSDK();
-  }
   initializeFacebookSDK()
   const { success, message } = route.query;
   if(success === 'true') {
@@ -61,7 +56,7 @@ const loginNormal = async () => {
 const initializeFacebookSDK = () => {
   // Xử lý sự kiện tải SDK của Facebook
   (window as any).fbAsyncInit = () => {
-    FB.init({
+    (window as any).FB.init({
       appId            : '941220900526368',
       autoLogAppEvents : true,
       xfbml            : true,
@@ -100,7 +95,7 @@ const loginGoogle = async (response: any) => {
 }
 
 const loginFacebook = () => {
-  FB.login((response: any) => {
+  (window as any).FB.login((response: any) => {
     console.log(response)
     if (response.authResponse) {
       const { accessToken } = response.authResponse;
