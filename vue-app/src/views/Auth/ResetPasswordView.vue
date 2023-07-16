@@ -25,7 +25,7 @@ const messageError = ref({
 const resetPassword = async () => {
   try{
     if(payload.value.password !== payload.value.confirm_password) {
-      messageError.value.password = ["password must match / mật khẩu không khớp nhau"];
+      (messageError.value.password as any) = ["password must match / mật khẩu không khớp nhau"];
       return;
     }
     const path = route.path.replace('/auth', '');
