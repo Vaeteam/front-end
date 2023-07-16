@@ -6,7 +6,7 @@ import { useUserStore } from "@/stores/user";
 import InputError from '@/components/InputError.vue';
 import router from '@/router';
 
-declare const FB: any;
+let FB: any;
 
 const route = useRoute()
 const userStore = useUserStore();
