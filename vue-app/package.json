@@ -16,12 +16,14 @@
     "@fortawesome/free-regular-svg-icons": "^6.4.0",
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@fortawesome/vue-fontawesome": "^3.0.3",
+    "axios": "^1.4.0",
     "pinia": "^2.0.16",
     "primevue": "^3.29.2",
     "vue": "^3.2.37",
     "vue-router": "^4.1.5",
     "vue-treeselect-next": "^0.2.0",
-    "vue3-treeselect": "^0.1.10"
+    "vue3-treeselect": "^0.1.10",
+    "vue3-google-login": "^2.0.17"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.0",
