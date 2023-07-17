@@ -1,14 +1,4 @@
-<script setup lang="ts">
-import { useUserStore } from "@/stores/user";
-import { useRouter } from 'vue-router';
-
-const router = useRouter()
-const userStore = useUserStore();
-const logOut = () => {
-  userStore.logout();
-  router.push('/auth/login')
-}
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <header class="navbar-light navbar-sticky">
@@ -31,9 +21,6 @@ const logOut = () => {
             </li>
             <li class="nav-item">
               <router-link class="nav-link" to="/auth/login">Log In</router-link>
-            </li>
-            <li class="nav-item" @click="logOut">
-              <div class="nav-link">Log Out</div>
             </li>
           </ul>
         </div>
