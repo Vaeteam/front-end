@@ -3,24 +3,42 @@
     import Tree from 'primevue/tree';
     import CommonService from "@/service/common.service";
     import { weekday, amountMonth, birthYears, yearOlds, educations, workingExperience, teachingExperience } from '@/constants/common.constant.ts'
-    import type { ShiftInterface } from '@/interfaces/common.interface.ts'
     import { emptyShift } from '@/interfaces/common.interface.ts'
     import Calendar from 'primevue/calendar';
 
 
+    let postData = ref({
+        learnerName: '',
+        learnerGender: false,
+        learnerbirthYear: '',
+        learnerEmail: '',
+        learnerPhoneNumber: '',
+        learnerLearningSchool: '',
+        teachingMethod: '',
+        courses: null,
+        shifts: [{...emptyShift}],
+        totalExpectedTeachingTime: '',
+        totalExpectedTeachingUnit: '',
+        teachingFee: '',
+        teachingFreeUnit: '',
+        requestFromAge: null,
+        requestToAge: null,
+        requestTeacherGender: '',
+        requestEducation: '',
+        requestWorkingExp: '',
+        requestTeachingExp: '',
+        extraNote: ''
+    });
+
     const courses = ref(CommonService.getCourses());
-    const selectedYear = ref<number | null>(null);
-    let teachingFee = ref('');
-    const teachingMethod = ref<string>('');
-    const selectedCourse = ref([]);
-    let shifts = ref<ShiftInterface[]>([{...emptyShift}]);
+    const validationMessage = ref('');
 
     const addRow = () => {
-        shifts.value.push({...emptyShift});
+        postData.value.shifts.push({...emptyShift});
     }
 
     const removeRow = (index:number) => {
-        shifts.value.splice(index, 1);
+        postData.value.shifts.splice(index, 1);
     };
 
     function formatCurrency(event:any) {
@@ -30,19 +48,22 @@
             style: 'currency',
             currency: 'VND',
         });
-        teachingFee.value = formattedValue;
+        postData.value.teachingFee = formattedValue;
     }
 
-
-    const fromAge = ref(null);
-    const toAge = ref(null);
-    const validationMessage = ref('');
     function checkAgeRange() {
-        if (fromAge.value && toAge.value && fromAge.value >= toAge.value) {
+        if (postData.value.requestFromAge && postData.value.requestToAge && postData.value.requestFromAge >= postData.value.requestToAge) {
             validationMessage.value = 'Invalid age range';
         } else {
             validationMessage.value = '';
         }
+    }
+
+    function handleSubmit(event: Event) {
+        event.preventDefault();
+
+        // Access the form values
+        console.log(postData.value);
     }
 
 </script>
@@ -59,7 +80,7 @@
     </p>
     <p>Các ô có dấu <span class="text-danger">*</span> là bắt buộc phải điền.</p>
 
-    <form class="row g-3">
+    <form class="row g-3" @submit="handleSubmit">
         <h5 class="mb-0">Thông tin người học</h5>
 
         <div class="col-12">
@@ -68,7 +89,7 @@
                     <h6 class="mb-lg-0">Tên <span class="text-danger">*</span></h6>
                 </div>
                 <div class="col-lg-8">
-                    <input type="text" class="form-control" id="firstName">
+                    <input type="text" class="form-control" id="name" name="name" v-model="postData.learnerName">
                 </div>
             </div>
         </div>
@@ -81,14 +102,14 @@
                 <div class="col-lg-8">
                     <div class="d-flex">
                         <div class="form-check radio-bg-light me-4">
-                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked>
-                            <label class="form-check-label" for="flexRadioDefault1">
+                            <input class="form-check-input" type="radio" name="isMale" id="isMale" checked value="male" v-model="postData.learnerGender">
+                            <label class="form-check-label" for="isMale">
                                 Nam
                             </label>
                         </div>
                         <div class="form-check radio-bg-light">
-                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
-                            <label class="form-check-label" for="flexRadioDefault2">
+                            <input class="form-check-input" type="radio" name="isFemale" id="isFemale" value="female" v-model="postData.learnerGender">
+                            <label class="form-check-label" for="isFemale">
                                 Nữ
                             </label>
                         </div>
@@ -106,7 +127,7 @@
                 <div class="col-lg-8">
                     <div class="row g-2 g-sm-4">
                         <div class="col-4">
-                            <select class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm">
+                            <select class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm" v-model="postData.learnerbirthYear">
                                 <option value="" disabled selected>Năm Sinh</option>
                                 <option v-for="year in birthYears" :key="year" :value="year">{{ year }}</option>
                             </select>
@@ -122,7 +143,7 @@
                     <h6 class="mb-lg-0">Email <span class="text-danger">*</span></h6>
                 </div>
                 <div class="col-lg-8">
-                    <input type="email" class="form-control" id="email">
+                    <input type="email" class="form-control" id="email" v-model="postData.learnerEmail">
                 </div>
             </div>
         </div>
@@ -133,7 +154,7 @@
                     <h6 class="mb-lg-0">Số điện thoại <span class="text-danger">*</span></h6>
                 </div>
                 <div class="col-lg-8">
-                    <input type="text" class="form-control" id="phoneNumber">
+                    <input type="text" class="form-control" id="phoneNumber" v-model="postData.learnerPhoneNumber">
                 </div>
             </div>
         </div>
@@ -144,7 +165,7 @@
                     <h6 class="mb-lg-0">Trường đang học <span class="text-danger">*</span></h6>
                 </div>
                 <div class="col-lg-8">
-                    <input type="text" class="form-control" id="learningSchool">
+                    <input type="text" class="form-control" id="learningSchool" v-model="postData.learnerLearningSchool">
                 </div>
             </div>
         </div>
@@ -164,13 +185,13 @@
                 <div class="col-lg-8">
                     <div class="d-flex">
                         <div class="form-check radio-bg-light me-4">
-                            <input class="form-check-input" type="radio" v-model="teachingMethod" id="MethodOffline" value="offline" checked>
+                            <input class="form-check-input" type="radio" id="MethodOffline" value="offline" checked v-model="postData.teachingMethod">
                             <label class="form-check-label" for="MethodOffline">
                                 Dạy tại nhà
                             </label>
                         </div>
                         <div class="form-check radio-bg-light">
-                            <input class="form-check-input" type="radio" v-model="teachingMethod" id="MethodOnline" value="online">
+                            <input class="form-check-input" type="radio" id="MethodOnline" value="online" v-model="postData.teachingMethod">
                             <label class="form-check-label" for="MethodOnline">
                                 Dạy online
                             </label>
@@ -187,8 +208,8 @@
                 </div>
                 <div class="col-lg-8">
                     <Tree
-                        v-model:selectionKeys="selectedCourse" 
-                        :value="courses" 
+                        v-model:selectionKeys="postData.courses" 
+                        :value="courses"
                         selectionMode="multiple" 
                         :filter="true"
                         filterMode="lenient"
@@ -204,7 +225,7 @@
                     <h6 class="mb-lg-0"> Các buổi học mỗi tuần</h6>
                 </div>
             
-                <div class="col-lg-8" v-for="(shift, index) in shifts" :key="index">
+                <div class="col-lg-8" v-for="(shift, index) in postData.shifts" :key="index">
                     <div class="row g-2 g-sm-4">
                         <div class="col-3">
                             <select class="form-select js-choice border-0 bg-light" aria-label=".form-select-sm" v-model="shift.weekday">
@@ -213,7 +234,7 @@
                             </select>
                         </div>
                         <div class="col-3 flex-auto">
-                            <Calendar id="calendar-startTime" v-model="shifts[index].startTime" timeOnly />
+                            <Calendar id="calendar-startTime" v-model="postData.shifts[index].startTime" timeOnly />
                         </div>
                         <div class="col-3 flex-auto">
                             <Calendar id="calendar-endTime" v-model="shift.endTime" timeOnly />
@@ -240,13 +261,13 @@
                 <div class="col-lg-8">
                     <div class="row g-2 g-sm-4">
                         <div class="col-6">
-                            <select class="form-select js-choice border-0 bg-light" aria-label=".form-select-sm">
+                            <select class="form-select js-choice border-0 bg-light" aria-label=".form-select-sm" v-model="postData.totalExpectedTeachingTime">
                                 <option value="" disabled selected>Chọn thời gian</option>
                                 <option v-for="amount in amountMonth" :key="amount" :value="amount">{{ amount }}</option>
                             </select>
                         </div>
                         <div class="col-6">
-                            <select class="form-select js-choice border-0 bg-light" aria-label=".form-select-sm">
+                            <select class="form-select js-choice border-0 bg-light" aria-label=".form-select-sm" v-model="postData.totalExpectedTeachingUnit">
                                 <option value="" disabled selected>Chọn thời gian</option>
                                 <option>Tháng</option>
                                 <option>Năm</option>
@@ -270,12 +291,12 @@
                                 id="teachingFee"
                                 type="text" 
                                 class="form-control" 
-                                v-model="teachingFee" 
+                                v-model="postData.teachingFee" 
                                 @input="formatCurrency"
                             >
                         </div>
                         <div class="col-4">
-                            <select class="form-select js-choice border-0 bg-light" aria-label=".form-select-sm">
+                            <select class="form-select js-choice border-0 bg-light" aria-label=".form-select-sm" v-model="postData.teachingFreeUnit">
                                 <option>Mỗi buổi</option>
                                 <option>Mỗi tháng</option>
                             </select>
@@ -298,20 +319,20 @@
                 <div class="col-lg-8">
                     <div class="d-flex">
                         <div class="form-check radio-bg-light me-4">
-                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked>
-                            <label class="form-check-label" for="flexRadioDefault1">
+                            <input class="form-check-input" type="radio" name="requestMale" id="requestMale" value="male" checked v-model="postData.requestTeacherGender" >
+                            <label class="form-check-label" for="requestMale">
                                 Nam
                             </label>
                         </div>
                         <div class="form-check radio-bg-light me-4">
-                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
-                            <label class="form-check-label" for="flexRadioDefault2">
+                            <input class="form-check-input" type="radio" name="requestFemale" id="requestFemale" value="female" v-model="postData.requestTeacherGender">
+                            <label class="form-check-label" for="requestFemale">
                                 Nữ
                             </label>
                         </div>
                         <div class="form-check radio-bg-light">
-                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
-                            <label class="form-check-label" for="flexRadioDefault2">
+                            <input class="form-check-input" type="radio" name="requestAnyGender" id="requestAnyGender" value="any" v-model="postData.requestTeacherGender">
+                            <label class="form-check-label" for="requestAnyGender">
                                 Nam/Nữ
                             </label>
                         </div>
@@ -332,7 +353,7 @@
                             Từ
                         </div>
                         <div class="col-3 flex-auto">
-                            <select id="fromAge" v-model="fromAge" class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm">
+                            <select id="fromAge" v-model="postData.requestFromAge" class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm">
                                 <option v-for="year in yearOlds" :key="year" :value="year">{{ year }}</option>
                             </select>
                         </div>
@@ -340,7 +361,7 @@
                             Đến
                         </div>
                         <div class="col-3">
-                            <select id="toAge" v-model="toAge" class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm" @input="checkAgeRange">
+                            <select id="toAge" v-model="postData.requestToAge" class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm" @input="checkAgeRange">
                                 <option v-for="year in yearOlds" :key="year" :value="year">{{ year }}</option>
                             </select>
                         </div>
@@ -357,21 +378,21 @@
                     <h6 class="mb-lg-0">Học vấn và kinh nghiệm<span class="text-danger">*</span></h6>
                 </div>
                 <div class="col-lg-2 me-4">
-                    <select class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm">
+                    <select class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm" v-model="postData.requestEducation">
                         <option value="" disabled selected>Học Vấn</option>
                         <option v-for="education in educations" :key="education" :value="education">{{ education }}</option>
                     </select>
                 </div>
                 <div class="col-lg-2 me-4">
-                    <select class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm">
+                    <select class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm" v-model="postData.requestWorkingExp">
                         <option value="" disabled selected>Kinh Nghiệp Làm Việc</option>
-                        <option v-for="education in educations" :key="education" :value="education">{{ education }}</option>
+                        <option v-for="workingexp in workingExperience" :key="workingexp" :value="workingexp">{{ workingexp }}</option>
                     </select>
                 </div>
                 <div class="col-lg-2">
-                    <select class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm">
+                    <select class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm" v-model="postData.requestTeachingExp">
                         <option value="" disabled selected>Kinh Nghiệp Dạy học</option>
-                        <option v-for="education in educations" :key="education" :value="education">{{ education }}</option>
+                        <option v-for="teachingExp in teachingExperience" :key="teachingExp" :value="teachingExp">{{ teachingExp }}</option>
                     </select>
                 </div>
             </div>
@@ -384,7 +405,7 @@
                     <h6 class="mb-lg-0">Ghi chú thêm</h6>
                 </div>
                 <div class="col-lg-8">
-                    <textarea class="form-control" rows="3" placeholder=""></textarea>
+                    <textarea class="form-control" rows="3" placeholder="" v-model="postData.extraNote"></textarea>
                 </div>
             </div>
         </div>
