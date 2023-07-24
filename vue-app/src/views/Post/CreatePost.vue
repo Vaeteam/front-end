@@ -234,7 +234,7 @@
                             </select>
                         </div>
                         <div class="col-3 flex-auto">
-                            <Calendar id="calendar-startTime" v-model="postData.shifts[index].startTime" timeOnly />
+                            <Calendar id="calendar-startTime" class="h75" v-model="postData.shifts[index].startTime" timeOnly />
                         </div>
                         <div class="col-3 flex-auto">
                             <Calendar id="calendar-endTime" v-model="shift.endTime" timeOnly />
@@ -243,7 +243,7 @@
                             <button class="btn btn-danger-soft" type="button" @click="removeRow(index)">Xóa</button>
                         </div>
                         <div class="col-3" v-else>
-                            <button class="btn btn-success-soft float-right" type="button" @click="addRow">Thêm buổi</button>
+                            <button class="btn btn-success-soft" type="button" @click="addRow">Thêm buổi</button>
                         </div>
                     </div>
                 </div>
@@ -297,6 +297,7 @@
                         </div>
                         <div class="col-4">
                             <select class="form-select js-choice border-0 bg-light" aria-label=".form-select-sm" v-model="postData.teachingFreeUnit">
+                                <option value="" selected disabled>Theo</option>
                                 <option>Mỗi buổi</option>
                                 <option>Mỗi tháng</option>
                             </select>
@@ -349,19 +350,15 @@
             
                 <div class="col-lg-8">
                     <div class="row g-2 g-sm-4">
-                        <div class="col-1">
-                            Từ
-                        </div>
                         <div class="col-3 flex-auto">
                             <select id="fromAge" v-model="postData.requestFromAge" class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm">
+                                <option value="null" disabled selected>Từ</option>
                                 <option v-for="year in yearOlds" :key="year" :value="year">{{ year }}</option>
                             </select>
                         </div>
-                        <div class="col-1">
-                            Đến
-                        </div>
                         <div class="col-3">
                             <select id="toAge" v-model="postData.requestToAge" class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm" @input="checkAgeRange">
+                                <option value="null" disabled selected>Đến</option>
                                 <option v-for="year in yearOlds" :key="year" :value="year">{{ year }}</option>
                             </select>
                         </div>
@@ -377,23 +374,25 @@
                 <div class="col-lg-4">
                     <h6 class="mb-lg-0">Học vấn và kinh nghiệm<span class="text-danger">*</span></h6>
                 </div>
-                <div class="col-lg-2 me-4">
-                    <select class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm" v-model="postData.requestEducation">
-                        <option value="" disabled selected>Học Vấn</option>
-                        <option v-for="education in educations" :key="education" :value="education">{{ education }}</option>
-                    </select>
-                </div>
-                <div class="col-lg-2 me-4">
-                    <select class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm" v-model="postData.requestWorkingExp">
-                        <option value="" disabled selected>Kinh Nghiệp Làm Việc</option>
-                        <option v-for="workingexp in workingExperience" :key="workingexp" :value="workingexp">{{ workingexp }}</option>
-                    </select>
-                </div>
-                <div class="col-lg-2">
-                    <select class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm" v-model="postData.requestTeachingExp">
-                        <option value="" disabled selected>Kinh Nghiệp Dạy học</option>
-                        <option v-for="teachingExp in teachingExperience" :key="teachingExp" :value="teachingExp">{{ teachingExp }}</option>
-                    </select>
+                <div class="d-flex col-lg-8">
+                    <div class="col-lg-3 me-4">
+                        <select class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm" v-model="postData.requestEducation">
+                            <option value="" disabled selected>Học Vấn</option>
+                            <option v-for="education in educations" :key="education" :value="education">{{ education }}</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-4 me-4">
+                        <select class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm" v-model="postData.requestWorkingExp">
+                            <option value="" disabled selected>Kinh Nghiệp Làm Việc</option>
+                            <option v-for="workingexp in workingExperience" :key="workingexp" :value="workingexp">{{ workingexp }}</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-4">
+                        <select class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm" v-model="postData.requestTeachingExp">
+                            <option value="" disabled selected>Kinh Nghiệp Dạy học</option>
+                            <option v-for="teachingExp in teachingExperience" :key="teachingExp" :value="teachingExp">{{ teachingExp }}</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
@@ -420,3 +419,8 @@
 <!-- Admission form END -->
 
 </template>
+<style lang="css" scoped>
+    .p-calendar {
+        height: 40px;
+    }
+</style>
