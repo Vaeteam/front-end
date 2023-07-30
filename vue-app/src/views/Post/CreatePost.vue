@@ -2,8 +2,8 @@
     import { ref } from 'vue';
     import Tree from 'primevue/tree';
     import CommonService from "@/service/common.service";
-    import { weekday, amountMonth, birthYears, yearOlds, educations, workingExperience, teachingExperience } from '@/constants/common.constant.ts'
-    import { emptyShift } from '@/interfaces/common.interface.ts'
+    import { weekday, amountMonth, birthYears, yearOlds, educations, workingExperience, teachingExperience } from '@/constants/common.constant'
+    import { emptyShift } from '@/interfaces/common.interface'
     import Calendar from 'primevue/calendar';
 
 
@@ -59,9 +59,7 @@
         }
     }
 
-    function handleSubmit(event: Event) {
-        event.preventDefault();
-
+    function handleSubmit() {
         // Access the form values
         console.log(postData.value);
     }
@@ -80,7 +78,7 @@
     </p>
     <p>Các ô có dấu <span class="text-danger">*</span> là bắt buộc phải điền.</p>
 
-    <form class="row g-3" @submit="handleSubmit">
+    <form class="row g-3" @submit.prevent="handleSubmit">
         <h5 class="mb-0">Thông tin người học</h5>
 
         <div class="col-12">
@@ -262,13 +260,13 @@
                     <div class="row g-2 g-sm-4">
                         <div class="col-6">
                             <select class="form-select js-choice border-0 bg-light" aria-label=".form-select-sm" v-model="postData.totalExpectedTeachingTime">
-                                <option value="" disabled selected>Chọn thời gian</option>
+                                <option value="" disabled selected> Khoảng thời gian</option>
                                 <option v-for="amount in amountMonth" :key="amount" :value="amount">{{ amount }}</option>
                             </select>
                         </div>
                         <div class="col-6">
                             <select class="form-select js-choice border-0 bg-light" aria-label=".form-select-sm" v-model="postData.totalExpectedTeachingUnit">
-                                <option value="" disabled selected>Chọn thời gian</option>
+                                <option value="" disabled selected>Đơn vị thời gian</option>
                                 <option>Tháng</option>
                                 <option>Năm</option>
                             </select>
@@ -411,7 +409,7 @@
 
         <!-- Button -->
         <div class="col-12 text-sm-end">
-            <button class="btn btn-primary mb-0">Submit</button>
+            <button class="btn btn-primary mb-0" type="submit">Submit</button>
         </div>
     </form>
     <!-- Form END -->

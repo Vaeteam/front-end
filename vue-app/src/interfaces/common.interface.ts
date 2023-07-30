@@ -1,4 +1,4 @@
-export interface CourseInterface {
+export interface TreeNode {
     key: number;
     label: string;
     data: string;
