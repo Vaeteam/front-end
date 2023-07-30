@@ -8,22 +8,16 @@ export const weekday = [
     'Chủ Nhật',
 ]
 
-export const birthYears = (() => {
-    const currentYear = new Date().getFullYear();
+const getRangeArray = (start: number, end: number) =>
+  Array.from({ length: end - start + 1 }, (_, index) => start + index);
 
-    const startYear = currentYear - 100; // Change this to set the range of years
+const currentYear = new Date().getFullYear();
 
-    const years: number[] = [];
-    for (let year = currentYear; year >= startYear; year--) {
-        years.push(year);
-    }
+export const birthYears = getRangeArray(currentYear - 100, currentYear);
 
-    return years;
-})();
+export const amountMonth = getRangeArray(1, 12);
 
-export const amountMonth = Array.from({ length: 12 }, (_, index) => index + 1);
-
-export const yearOlds = Array.from({ length: 80 }, (_, index) => index + 18);
+export const yearOlds = getRangeArray(18, 97);
 
 export const educations = ['Tốt nghiệp lớp 12', 'Sinh Viên', 'Cử Nhân/Kỹ Sư', 'Học Viên Cao Học','Thạc Sĩ', 'Tiến Sĩ', 'Phó Giáo Sư', 'Giáo Sư']
 

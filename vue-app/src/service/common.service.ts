@@ -1,8 +1,8 @@
-import type { CourseInterface } from '@/interfaces/common.interface'
+import type { TreeNode } from '@/interfaces/common.interface'
 
 class CommonService {
     getCourses() {
-        const mockup_data: CourseInterface[] = [
+        const mockup_data: TreeNode[] = [
                 {key: 1, label: 'Môn học', data: 'test title 1', children: [
                     {
                         key: 2, label: 'test name 2', data: 'test title 1', children: [
