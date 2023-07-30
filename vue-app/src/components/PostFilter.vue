@@ -1,5 +1,9 @@
 <script setup lang="ts">
+    import router from "@/router/index";
 
+    const navigateToCreatePostPage = () => {
+        router.push({name: "create-post"});
+    };
 </script>
 
 <template>
@@ -8,6 +12,10 @@
         <!-- Responsive offcanvas body START -->
         <nav class="navbar navbar-light navbar-expand-xl mx-0">
             <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                <!-- Create Post button -->
+                <div class="d-grid p-2 p-xl-0 mb-5 bg-body text-center">
+                    <button class="btn btn-danger mb-0" @click="navigateToCreatePostPage">Tuyển Gia Sư</button>
+                </div>
                 <div class="offcanvas-body p-3 p-xl-0">
                     <form>
                         <!-- Category START -->
