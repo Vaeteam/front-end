@@ -1,0 +1,23 @@
+<script setup lang="ts">
+
+import ProfileNavBarStudent from '@/components/ProfileStudentNavBar.vue'
+import ProfileStudentSubscription from '@/components/ProfileStudentSubscription.vue'
+import ProfileStudentBanner from '@/components/ProfileStudentBanner.vue'
+
+</script>
+
+<template>
+    <section class="pt-0">
+        <ProfileStudentBanner />
+    </section>
+
+    <section class="pt-0">
+        <div class="container">
+            <div class="row">
+                <ProfileNavBarStudent />
+                <ProfileStudentSubscription />
+            </div>
+        </div>
+    </section>
+</template>
+

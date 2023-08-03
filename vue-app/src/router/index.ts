@@ -11,8 +11,24 @@ import ForgotPasswordView from "@/views/Auth/ForgotPasswordView.vue";
 import AboutView from "../views/AboutView.vue";
 import HomeView from "../views/HomeView.vue";
 import ProfileView from "@/views/Profile/ProfileView.vue";
+import StudentSubscriptionView from "@/views/Profile/StudentSubscriptionView.vue";
+import StudentCourseListView from "@/views/Profile/StudentCourseListView.vue";
+import StudentCourseResumeView from "@/views/Profile/StudentCourseResumeView.vue";
+import StudentPaymentView from "@/views/Profile/StudentPaymentView.vue";
+import StudentBookmarkView from "@/views/Profile/StudentBookmarkView.vue";
+import StudentQuizView from "@/views/Profile/StudentQuizView.vue";
+import TeacherCourseListView from "@/views/Profile/TeacherCourseListView.vue";
+import TeacherQuizView from "@/views/Profile/TeacherQuizView.vue";
+import TeacherEarningView from "@/views/Profile/TeacherEarningView.vue";
+import TeacherOrderView from "@/views/Profile/TeacherOrderView.vue";
+import TeacherReviewView from "@/views/Profile/TeacherReviewView.vue";
+import TeacherPayoutView from "@/views/Profile/TeacherPayoutView.vue";
+import StudentListView from "@/views/Profile/TeacherStudentsListView.vue"
 import ListTeacherView from "@/views/ListTeacherView.vue";
 import ActiveAccount from "@/views/Auth/ActiveAccount.vue";
+import NotFound from "@/views/NotFound.vue";
+
+
 import { useUserStore } from "@/stores/user";
 
 const router = createRouter({
@@ -65,6 +81,68 @@ const router = createRouter({
           component: ActiveAccount,
         },
       ],
+    },
+    {
+      path: "/profile",
+      component: LayoutWithNavbar,
+      children: [
+        {
+          path: "student/subscriptions",
+          component: StudentSubscriptionView,
+        },
+        {
+          path: "student/courseView",
+          component: StudentCourseListView,
+        },
+        {
+          path: "student/courseResume",
+          component: StudentCourseResumeView,
+        },
+        {
+          path: "student/quiz",
+          component: StudentQuizView,
+        },
+        {
+          path: "student/payment",
+          component: StudentPaymentView,
+        },
+        {
+          path: "student/bookmark",
+          component: StudentBookmarkView,
+        },
+        {
+          path: "courses",
+          component: TeacherCourseListView,
+        },
+        {
+          path: "quiz",
+          component: TeacherQuizView,
+        },
+        {
+          path: "earnings",
+          component: TeacherEarningView,
+        },
+        {
+          path: "students",
+          component: StudentListView,
+        },
+        {
+          path: "orders",
+          component: TeacherOrderView,
+        },
+        {
+          path: "reviews",
+          component: TeacherReviewView,
+        },
+        {
+          path: "payouts",
+          component: TeacherPayoutView,
+        }
+      ],
+    },
+    {
+      path: "/:catchAll(.*)",
+      component: NotFound,
     },
   ],
 });

@@ -30,6 +30,9 @@ const logOut = () => {
               <router-link class="nav-link" to="/about">About</router-link>
             </li>
             <li class="nav-item">
+              <router-link class="nav-link" to="/profile">Profile</router-link>
+            </li>
+            <li class="nav-item">
               <router-link class="nav-link" to="/auth/login">Log In</router-link>
             </li>
             <li class="nav-item" @click="logOut">

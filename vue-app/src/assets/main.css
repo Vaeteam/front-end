@@ -1,2 +1,16 @@
 @import "./base.css";
 @import './css/style.css';
+@import './vendor/font-awesome/css/all.css';
+@import './vendor/font-awesome/css/fontawesome.css';
+@import './vendor/font-awesome/css/regular.css';
+@import './vendor/font-awesome/css/solid.css';
+@import './vendor/font-awesome/css/svg-with-js.css';
+@import './vendor/font-awesome/css/v4-shims.css';
+@import './vendor/bootstrap-icons/bootstrap-icons.css';
+@import './vendor/stepper/css/bs-stepper.css';
+@import './vendor/choices/css/choices.css';
+@import './vendor/aos/aos.css';
+@import './vendor/apexcharts/css/apexcharts.css';
+@import url("https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap");
+@import url("https://fonts.gstatic.com");
+@import url("https://fonts.googleapis.com");

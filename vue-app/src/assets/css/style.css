@@ -67,6 +67,11 @@
   --bs-body-bg: #fff;
 }
 
+.list-group-dark .list-group-item:not(.bg-danger-soft-hover):hover,
+.list-group-item:not(.bg-danger-soft-hover).router-link-exact-active {
+  color: #24292d !important;
+  background-color: #fff !important;
+}
 *,
 *::before,
 *::after {
