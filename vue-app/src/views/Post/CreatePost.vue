@@ -5,8 +5,10 @@
     import { weekday, amountMonth, birthYears, yearOlds, educations, workingExperience, teachingExperience } from '@/constants/common.constant'
     import { emptyShift } from '@/interfaces/common.interface'
     import Calendar from 'primevue/calendar';
+    import { commonStore } from '@/stores/common';
 
 
+    const store = commonStore();
     let postData = ref({
         learnerName: '',
         learnerGender: false,
@@ -15,7 +17,7 @@
         learnerPhoneNumber: '',
         learnerLearningSchool: '',
         teachingMethod: '',
-        courses: null,
+        subjects: null,
         shifts: [{...emptyShift}],
         totalExpectedTeachingTime: '',
         totalExpectedTeachingUnit: '',
@@ -30,7 +32,7 @@
         extraNote: ''
     });
 
-    const courses = ref(CommonService.getCourses());
+    const subjects = store.subjects;
     const validationMessage = ref('');
 
     const addRow = () => {
@@ -206,8 +208,8 @@
                 </div>
                 <div class="col-lg-8">
                     <Tree
-                        v-model:selectionKeys="postData.courses" 
-                        :value="courses"
+                        v-model:selectionKeys="postData.subjects" 
+                        :value="subjects"
                         selectionMode="multiple" 
                         :filter="true"
                         filterMode="lenient"
