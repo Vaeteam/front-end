@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import type { TreeNode } from '@/interfaces/common.interface'
+import type { TreeNode } from 'primevue/tree/Tree';
 import CommonService from "@/service/common.service"; 
 
 export const commonStore = defineStore('common', {

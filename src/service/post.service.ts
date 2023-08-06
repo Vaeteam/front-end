@@ -1,4 +1,5 @@
 import type { PostInterface } from '@/interfaces/post.interface'
+import apiService from './api.service';
 
 class PostService {
     getPage(page_number: number) {
@@ -11,6 +12,11 @@ class PostService {
             ]
 
         return mockup_data
+    }
+
+    async createPost(payload:any) {
+        const response = await apiService.post('/post/create/', payload);
+        return response.data;
     }
 }
 

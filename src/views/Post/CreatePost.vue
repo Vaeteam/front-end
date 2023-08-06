@@ -1,40 +1,43 @@
 <script setup lang='ts'>
     import { ref } from 'vue';
-    import Tree from 'primevue/tree';
-    import CommonService from "@/service/common.service";
-    import { weekday, amountMonth, birthYears, yearOlds, educations, workingExperience, teachingExperience } from '@/constants/common.constant'
+    import TreeSelect from 'primevue/treeselect';
+    import type { TreeNode } from 'primevue/tree/Tree';
+    import PostService from "@/service/post.service";
+    import { weekday, amountMonth, birthYears, yearOlds, educations, yearExperience } from '@/constants/common.constant'
     import { emptyShift } from '@/interfaces/common.interface'
+    import type { ShiftInterface } from '@/interfaces/common.interface'
     import Calendar from 'primevue/calendar';
     import { commonStore } from '@/stores/common';
-    import type { TreeNode } from '@/interfaces/common.interface'
 
 
     const store = commonStore();
+    const isFormSubmitted = ref(false);
+    const isSubjectSelected = ref(true);
     let postData = ref({
         learnerName: '',
-        learnerGender: false,
+        learnerSex: false,
         learnerbirthYear: '',
         learnerEmail: '',
         learnerPhoneNumber: '',
         learnerLearningSchool: '',
-        teachingMethod: '',
-        subjects: [],
+        teachingLocation: '',
+        subjects: [] as string[],
         shifts: [{...emptyShift}],
-        totalExpectedTeachingTime: '',
-        totalExpectedTeachingUnit: '',
+        totalTeachingTime: '',
+        totalTeachingUnit: '',
         teachingFee: '',
         teachingFreeUnit: '',
-        requestFromAge: null,
-        requestToAge: null,
-        requestTeacherGender: '',
-        requestEducation: '',
-        requestWorkingExp: '',
-        requestTeachingExp: '',
-        extraNote: ''
+        requestTeacherSex: '',
+        requestTeacherAgeFrom: null,
+        requestTeacherAgeTo: null,
+        requestTeacherEducation: '',
+        requestTeacherWorkingExp: '',
+        requestTeacherTeachingExp: '',
+        note: ''
     });
 
-    const subjects = store.subjects as TreeNode[] | [];
-    const validationMessage = ref('');
+    const subjects = store.subjects as TreeNode[];
+    const validationMessage = ref<string>('');
 
     const addRow = () => {
         postData.value.shifts.push({...emptyShift});
@@ -54,23 +57,57 @@
         postData.value.teachingFee = formattedValue;
     }
 
-    function checkAgeRange() {
-        if (postData.value.requestFromAge && postData.value.requestToAge && postData.value.requestFromAge >= postData.value.requestToAge) {
-            validationMessage.value = 'Invalid age range';
-        } else {
-            validationMessage.value = '';
+    function validateAgeRange() {
+        if (postData.value.requestTeacherAgeFrom && postData.value.requestTeacherAgeTo ) {
+            if (postData.value.requestTeacherAgeFrom >= postData.value.requestTeacherAgeTo) {
+                validationMessage.value = 'Tuổi bên trái phải nhỏ hơn Tuổi bên phải';
+                return false
+            } else {
+                validationMessage.value = '';
+                return true
+            }
+        } 
+        if (postData.value.requestTeacherAgeFrom || postData.value.requestTeacherAgeTo ) {
+            validationMessage.value = 'Tuổi bên trái và tuổi bên phải phải được chọn cả 2';
+                return false
         }
+        return true
+    }
+
+    function isShiftValid(shift:ShiftInterface) {
+        return shift.weekday && shift.startTime && shift.endTime ? true : false
+    }
+
+    function isFormValid() {
+        console.log(isSubjectSelected.value, validateAgeRange(), postData.value.shifts.every((shift) => isShiftValid(shift)))
+        return isSubjectSelected.value 
+        && validateAgeRange()
+        && postData.value.shifts.every((shift) => isShiftValid(shift))
+        && postData.value.learnerName 
+        && postData.value.learnerSex
+        && postData.value.learnerbirthYear
+        && postData.value.teachingLocation
+        && postData.value.totalTeachingTime
+        && postData.value.totalTeachingUnit
+        && postData.value.teachingFee
+        && postData.value.teachingFreeUnit
+        && postData.value.requestTeacherSex 
     }
 
     function handleSubmit() {
-        // Access the form values
-        console.log(postData.value);
+        const subjectIds: string[] = Object.keys(postData.value.subjects)
+        .filter((key) => postData.value.subjects[key].checked === true);
+        isSubjectSelected.value = subjectIds.length > 0;
+        isFormSubmitted.value = true;
+        if (isFormValid()) {
+            postData.value.subjects = subjectIds
+            PostService.createPost(postData.value)
+        }
     }
 
 </script>
 
 <template>
-<!-- Admission form START -->
 <div class="col-md-8 mx-auto">
     <!-- Title -->
     <h2 class="mb-3">Tạo Bài Đăng Tuyển Gia sư.</h2>
@@ -87,10 +124,18 @@
         <div class="col-12">
             <div class="row g-xl-0 align-items-center">
                 <div class="col-lg-4">
-                    <h6 class="mb-lg-0">Tên <span class="text-danger">*</span></h6>
+                    <h6 class="mb-lg-0">Tên người học<span class="text-danger">*</span></h6>
                 </div>
                 <div class="col-lg-8">
-                    <input type="text" class="form-control" id="name" name="name" v-model="postData.learnerName">
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        id="name" 
+                        name="name" 
+                        v-model="postData.learnerName" 
+                        placeholder="Nhập tên người học"
+                        :class="{ 'is-invalid': isFormSubmitted && !postData.learnerName }"
+                    >
                 </div>
             </div>
         </div>
@@ -103,13 +148,29 @@
                 <div class="col-lg-8">
                     <div class="d-flex">
                         <div class="form-check radio-bg-light me-4">
-                            <input class="form-check-input" type="radio" name="isMale" id="isMale" checked value="male" v-model="postData.learnerGender">
+                            <input 
+                                class="form-check-input" 
+                                type="radio" 
+                                name="isMale" 
+                                id="isMale" 
+                                value="male" 
+                                v-model="postData.learnerSex"
+                                :class="{ 'is-invalid': isFormSubmitted && !postData.learnerSex }"
+                            >
                             <label class="form-check-label" for="isMale">
                                 Nam
                             </label>
                         </div>
                         <div class="form-check radio-bg-light">
-                            <input class="form-check-input" type="radio" name="isFemale" id="isFemale" value="female" v-model="postData.learnerGender">
+                            <input 
+                                class="form-check-input" 
+                                type="radio" 
+                                name="isFemale" 
+                                id="isFemale" 
+                                value="female" 
+                                v-model="postData.learnerSex"
+                                :class="{ 'is-invalid': isFormSubmitted && !postData.learnerSex }"
+                            >
                             <label class="form-check-label" for="isFemale">
                                 Nữ
                             </label>
@@ -122,13 +183,18 @@
         <div class="col-12">
             <div class="row g-xl-0 align-items-center">
                 <div class="col-lg-4">
-                    <h6 class="mb-lg-0">Năm sinh</h6>
+                    <h6 class="mb-lg-0">Năm sinh <span class="text-danger">*</span></h6>
                 </div>
             
                 <div class="col-lg-8">
                     <div class="row g-2 g-sm-4">
                         <div class="col-4">
-                            <select class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm" v-model="postData.learnerbirthYear">
+                            <select 
+                                class="form-select js-choice z-index-9 border-0 bg-light" 
+                                aria-label=".form-select-sm" 
+                                v-model="postData.learnerbirthYear"
+                                :class="{ 'is-invalid': isFormSubmitted && !postData.learnerbirthYear }"
+                            >
                                 <option value="" disabled selected>Năm Sinh</option>
                                 <option v-for="year in birthYears" :key="year" :value="year">{{ year }}</option>
                             </select>
@@ -141,7 +207,7 @@
         <div class="col-12">
             <div class="row g-xl-0 align-items-center">
                 <div class="col-lg-4">
-                    <h6 class="mb-lg-0">Email <span class="text-danger">*</span></h6>
+                    <h6 class="mb-lg-0">Email</h6>
                 </div>
                 <div class="col-lg-8">
                     <input type="email" class="form-control" id="email" v-model="postData.learnerEmail">
@@ -152,7 +218,7 @@
         <div class="col-12">
             <div class="row g-xl-0 align-items-center">
                 <div class="col-lg-4">
-                    <h6 class="mb-lg-0">Số điện thoại <span class="text-danger">*</span></h6>
+                    <h6 class="mb-lg-0">Số điện thoại</h6>
                 </div>
                 <div class="col-lg-8">
                     <input type="text" class="form-control" id="phoneNumber" v-model="postData.learnerPhoneNumber">
@@ -163,10 +229,10 @@
         <div class="col-12">
             <div class="row g-xl-0 align-items-center">
                 <div class="col-lg-4">
-                    <h6 class="mb-lg-0">Trường đang học <span class="text-danger">*</span></h6>
+                    <h6 class="mb-lg-0">Trường đang học</h6>
                 </div>
                 <div class="col-lg-8">
-                    <input type="text" class="form-control" id="learningSchool" v-model="postData.learnerLearningSchool">
+                    <input type="text" class="form-control" id="learningSchool" v-model="postData.learnerLearningSchool" placeholder="Nhập trường học viên đang học">
                 </div>
             </div>
         </div>
@@ -186,15 +252,68 @@
                 <div class="col-lg-8">
                     <div class="d-flex">
                         <div class="form-check radio-bg-light me-4">
-                            <input class="form-check-input" type="radio" id="MethodOffline" value="offline" checked v-model="postData.teachingMethod">
-                            <label class="form-check-label" for="MethodOffline">
-                                Dạy tại nhà
+                            <input 
+                                class="form-check-input" 
+                                type="radio" 
+                                id="locationLearnerHome" 
+                                value="learner home"  
+                                v-model="postData.teachingLocation"
+                                :class="{ 'is-invalid': isFormSubmitted && !postData.teachingLocation }"
+                            >
+                            <label class="form-check-label" for="locationLearnerHome">
+                                Dạy tại nhà học viên
+                            </label>
+                        </div>
+                        <div class="form-check radio-bg-light me-4">
+                            <input 
+                                class="form-check-input" 
+                                type="radio" 
+                                id="locationTeacherHome" 
+                                value="teacher home" 
+                                v-model="postData.teachingLocation"
+                                :class="{ 'is-invalid': isFormSubmitted && !postData.teachingLocation }"
+                            >
+                            <label class="form-check-label" for="locationTeacherHome">
+                                Dạy tại nhà giáo viên
+                            </label>
+                        </div>
+                        <div class="form-check radio-bg-light me-4">
+                            <input 
+                                class="form-check-input" 
+                                type="radio" 
+                                id="locationOnline" 
+                                value="online" 
+                                v-model="postData.teachingLocation"
+                                :class="{ 'is-invalid': isFormSubmitted && !postData.teachingLocation }"
+                            >
+                            <label class="form-check-label" for="locationOnline">
+                                Dạy online
+                            </label>
+                        </div>
+                        <div class="form-check radio-bg-light me-4">
+                            <input 
+                                class="form-check-input" 
+                                type="radio" 
+                                id="locationTeacherHomeHybrid" 
+                                value="teacher home hibrid" 
+                                v-model="postData.teachingLocation"
+                                :class="{ 'is-invalid': isFormSubmitted && !postData.teachingLocation }"
+                            >
+                            <label class="form-check-label" for="locationTeacherHomeHybrid">
+                                Dạy online và tại nhà giáo viên
                             </label>
                         </div>
                         <div class="form-check radio-bg-light">
-                            <input class="form-check-input" type="radio" id="MethodOnline" value="online" v-model="postData.teachingMethod">
-                            <label class="form-check-label" for="MethodOnline">
-                                Dạy online
+                            <input 
+                                class="form-check-input" 
+                                type="radio" 
+                                id="locationLeanerHomeHybrid" 
+                                value="leaner home hibrid" 
+                                v-model="postData.teachingLocation"
+                                :class="{ 'is-invalid': isFormSubmitted && !postData.teachingLocation }"
+                            >
+                            <label class="form-check-label" for="locationLeanerHomeHybrid">
+                                Dạy online và tại nhà học viên
                             </label>
                         </div>
                     </div>
@@ -208,13 +327,13 @@
                     <h6 class="mb-lg-0">Môn học<span class="text-danger">*</span></h6>
                 </div>
                 <div class="col-lg-8">
-                    <Tree
-                        v-model:selectionKeys="postData.subjects" 
-                        :value="subjects"
-                        selectionMode="multiple" 
-                        :filter="true"
-                        filterMode="lenient"
-                        :metaKeySelection="false"
+                    <TreeSelect 
+                        v-model="postData.subjects" 
+                        :options="subjects" 
+                        selectionMode="checkbox" 
+                        :metaKeySelection="false" 
+                        placeholder="Chọn môn học" 
+                        :class="['w-full md:w-20rem', { 'p-invalid': !isSubjectSelected }]" 
                     />
                 </div>
             </div>
@@ -223,22 +342,40 @@
         <div class="col-12">
             <div class="row g-xl-0 align-items-center justify-content-end">
                 <div class="col-lg-4">
-                    <h6 class="mb-lg-0"> Các buổi học mỗi tuần</h6>
+                    <h6 class="mb-lg-0"> Các buổi học mỗi tuần <span class="text-danger">*</span></h6>
                 </div>
             
                 <div class="col-lg-8" v-for="(shift, index) in postData.shifts" :key="index">
                     <div class="row g-2 g-sm-4">
                         <div class="col-3">
-                            <select class="form-select js-choice border-0 bg-light" aria-label=".form-select-sm" v-model="shift.weekday">
-                                <option value="" disabled selected>Chọn ngày</option>
+                            <select 
+                                class="form-select js-choice border-0 bg-light" 
+                                aria-label=".form-select-sm" 
+                                v-model="shift.weekday"
+                                :class="{ 'is-invalid': isFormSubmitted && !isShiftValid(shift) }"
+                            >
+                                <option value="" disabled selected>Thứ ...</option>
                                 <option v-for="day in weekday" :key="day" :value="day">{{ day }}</option>
                             </select>
                         </div>
                         <div class="col-3 flex-auto">
-                            <Calendar id="calendar-startTime" class="h75" v-model="postData.shifts[index].startTime" timeOnly />
+                            <Calendar 
+                            id="calendar-startTime" 
+                            class="h75" 
+                            v-model="postData.shifts[index].startTime" 
+                            timeOnly 
+                            placeholder="Bắt đầu lúc"
+                            :class="{ 'p-invalid': isFormSubmitted && !isShiftValid(shift) }"
+                            />
                         </div>
                         <div class="col-3 flex-auto">
-                            <Calendar id="calendar-endTime" v-model="shift.endTime" timeOnly />
+                            <Calendar 
+                            id="calendar-endTime" 
+                            v-model="shift.endTime" 
+                            timeOnly 
+                            placeholder="kết thức lúc"
+                            :class="{ 'p-invalid': isFormSubmitted && !isShiftValid(shift) }"
+                            />
                         </div>
                         <div class="col-3" v-if="index != 0">
                             <button class="btn btn-danger-soft" type="button" @click="removeRow(index)">Xóa</button>
@@ -252,8 +389,6 @@
             </div>
         </div>
 
-
-        <!-- Home address -->
         <div class="col-12">
             <div class="row g-xl-0 align-items-center">
                 <div class="col-lg-4">
@@ -262,16 +397,27 @@
                 <div class="col-lg-8">
                     <div class="row g-2 g-sm-4">
                         <div class="col-6">
-                            <select class="form-select js-choice border-0 bg-light" aria-label=".form-select-sm" v-model="postData.totalExpectedTeachingTime">
+                            <select 
+                                class="form-select js-choice border-0 bg-light" 
+                                aria-label=".form-select-sm" 
+                                v-model="postData.totalTeachingTime"
+                                :class="{ 'is-invalid': isFormSubmitted && !postData.totalTeachingTime }"
+                            >
                                 <option value="" disabled selected> Khoảng thời gian</option>
                                 <option v-for="amount in amountMonth" :key="amount" :value="amount">{{ amount }}</option>
                             </select>
                         </div>
                         <div class="col-6">
-                            <select class="form-select js-choice border-0 bg-light" aria-label=".form-select-sm" v-model="postData.totalExpectedTeachingUnit">
+                            <select 
+                                class="form-select js-choice border-0 bg-light" 
+                                aria-label=".form-select-sm" 
+                                v-model="postData.totalTeachingUnit"
+                                :class="{ 'is-invalid': isFormSubmitted && !postData.totalTeachingUnit }"
+                            >
                                 <option value="" disabled selected>Đơn vị thời gian</option>
+                                <option>Buổi</option>
                                 <option>Tháng</option>
-                                <option>Năm</option>
+                                <option>Tuần</option>
                             </select>
                         </div>
                     </div>
@@ -294,12 +440,20 @@
                                 class="form-control" 
                                 v-model="postData.teachingFee" 
                                 @input="formatCurrency"
+                                placeholder="Nhập học phí cho từng buổi, tuần hoặc tháng"
+                                :class="{ 'is-invalid': isFormSubmitted && !postData.teachingFee }"
                             >
                         </div>
                         <div class="col-4">
-                            <select class="form-select js-choice border-0 bg-light" aria-label=".form-select-sm" v-model="postData.teachingFreeUnit">
-                                <option value="" selected disabled>Theo</option>
+                            <select 
+                            class="form-select js-choice border-0 bg-light" 
+                            aria-label=".form-select-sm" 
+                            v-model="postData.teachingFreeUnit"
+                            :class="{ 'is-invalid': isFormSubmitted && !postData.teachingFreeUnit }"
+                            >
+                                <option value="" selected disabled>Đơn vị thời gian</option>
                                 <option>Mỗi buổi</option>
+                                <option>Mỗi tuần</option>
                                 <option>Mỗi tháng</option>
                             </select>
                         </div>
@@ -321,19 +475,43 @@
                 <div class="col-lg-8">
                     <div class="d-flex">
                         <div class="form-check radio-bg-light me-4">
-                            <input class="form-check-input" type="radio" name="requestMale" id="requestMale" value="male" checked v-model="postData.requestTeacherGender" >
+                            <input 
+                                class="form-check-input" 
+                                type="radio" 
+                                name="requestMale" 
+                                id="requestMale" 
+                                value="male"  
+                                v-model="postData.requestTeacherSex"
+                                :class="{ 'is-invalid': isFormSubmitted && !postData.requestTeacherSex }"
+                            >
                             <label class="form-check-label" for="requestMale">
                                 Nam
                             </label>
                         </div>
                         <div class="form-check radio-bg-light me-4">
-                            <input class="form-check-input" type="radio" name="requestFemale" id="requestFemale" value="female" v-model="postData.requestTeacherGender">
+                            <input 
+                                class="form-check-input" 
+                                type="radio" 
+                                name="requestFemale" 
+                                id="requestFemale" 
+                                value="female" 
+                                v-model="postData.requestTeacherSex"
+                                :class="{ 'is-invalid': isFormSubmitted && !postData.requestTeacherSex }"
+                            >
                             <label class="form-check-label" for="requestFemale">
                                 Nữ
                             </label>
                         </div>
                         <div class="form-check radio-bg-light">
-                            <input class="form-check-input" type="radio" name="requestAnyGender" id="requestAnyGender" value="any" v-model="postData.requestTeacherGender">
+                            <input 
+                                class="form-check-input" 
+                                type="radio" 
+                                name="requestAnyGender" 
+                                id="requestAnyGender" 
+                                value="any" 
+                                v-model="postData.requestTeacherSex"
+                                :class="{ 'is-invalid': isFormSubmitted && !postData.requestTeacherSex }"
+                            >
                             <label class="form-check-label" for="requestAnyGender">
                                 Nam/Nữ
                             </label>
@@ -352,13 +530,21 @@
                 <div class="col-lg-8">
                     <div class="row g-2 g-sm-4">
                         <div class="col-3 flex-auto">
-                            <select id="fromAge" v-model="postData.requestFromAge" class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm">
+                            <select 
+                                id="fromAge" 
+                                v-model="postData.requestTeacherAgeFrom" 
+                                class="form-select js-choice z-index-9 border-0 bg-light" 
+                                aria-label=".form-select-sm" @change="validateAgeRange">
                                 <option value="null" disabled selected>Từ</option>
                                 <option v-for="year in yearOlds" :key="year" :value="year">{{ year }}</option>
                             </select>
                         </div>
                         <div class="col-3">
-                            <select id="toAge" v-model="postData.requestToAge" class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm" @input="checkAgeRange">
+                            <select 
+                                id="toAge" 
+                                v-model="postData.requestTeacherAgeTo" 
+                                class="form-select js-choice z-index-9 border-0 bg-light" 
+                                aria-label=".form-select-sm" @change="validateAgeRange">
                                 <option value="null" disabled selected>Đến</option>
                                 <option v-for="year in yearOlds" :key="year" :value="year">{{ year }}</option>
                             </select>
@@ -373,55 +559,58 @@
         <div class="col-12">
             <div class="row g-xl-0 align-items-center">
                 <div class="col-lg-4">
-                    <h6 class="mb-lg-0">Học vấn và kinh nghiệm<span class="text-danger">*</span></h6>
+                    <h6 class="mb-lg-0">Học vấn và kinh nghiệm</h6>
                 </div>
                 <div class="d-flex col-lg-8">
                     <div class="col-lg-3 me-4">
-                        <select class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm" v-model="postData.requestEducation">
+                        <select class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm" v-model="postData.requestTeacherEducation">
                             <option value="" disabled selected>Học Vấn</option>
                             <option v-for="education in educations" :key="education" :value="education">{{ education }}</option>
                         </select>
                     </div>
                     <div class="col-lg-4 me-4">
-                        <select class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm" v-model="postData.requestWorkingExp">
+                        <select class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm" v-model="postData.requestTeacherWorkingExp">
                             <option value="" disabled selected>Kinh Nghiệp Làm Việc</option>
-                            <option v-for="workingexp in workingExperience" :key="workingexp" :value="workingexp">{{ workingexp }}</option>
+                            <option v-for="workingexp in yearExperience" :key="workingexp" :value="workingexp">{{ workingexp }}</option>
                         </select>
                     </div>
                     <div class="col-lg-4">
-                        <select class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm" v-model="postData.requestTeachingExp">
+                        <select class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm" v-model="postData.requestTeacherTeachingExp">
                             <option value="" disabled selected>Kinh Nghiệp Dạy học</option>
-                            <option v-for="teachingExp in teachingExperience" :key="teachingExp" :value="teachingExp">{{ teachingExp }}</option>
+                            <option v-for="teachingExp in yearExperience" :key="teachingExp" :value="teachingExp">{{ teachingExp }}</option>
                         </select>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- School or college address -->
         <div class="col-12">
             <div class="row g-xl-0">
                 <div class="col-lg-4">
                     <h6 class="mb-lg-0">Ghi chú thêm</h6>
                 </div>
                 <div class="col-lg-8">
-                    <textarea class="form-control" rows="3" placeholder="" v-model="postData.extraNote"></textarea>
+                    <textarea class="form-control" rows="3" placeholder="" v-model="postData.note"></textarea>
                 </div>
             </div>
         </div>
 
-        <!-- Button -->
         <div class="col-12 text-sm-end">
             <button class="btn btn-primary mb-0" type="submit">Submit</button>
         </div>
     </form>
-    <!-- Form END -->
 </div>
-<!-- Admission form END -->
 
 </template>
 <style lang="css" scoped>
     .p-calendar {
         height: 40px;
+    }
+    .error-message {
+        color: red;
+        margin-top: 5px;
+    }
+    .is-invalid {
+        border-color: red;
     }
 </style>

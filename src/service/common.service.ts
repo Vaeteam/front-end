@@ -1,4 +1,4 @@
-import type { TreeNode } from '@/interfaces/common.interface'
+import type { TreeNode } from 'primevue/tree/Tree';
 import apiService from './api.service';
 
 class CommonService {
