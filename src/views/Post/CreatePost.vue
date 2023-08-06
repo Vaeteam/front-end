@@ -24,9 +24,9 @@
         subjects: [] as string[],
         shifts: [{...emptyShift}],
         totalTeachingTime: '',
-        totalTeachingUnit: '',
+        totalTeachingTimeUnit: '',
         teachingFee: '',
-        teachingFreeUnit: '',
+        teachingFeeUnit: '',
         requestTeacherSex: '',
         requestTeacherAgeFrom: null,
         requestTeacherAgeTo: null,
@@ -88,9 +88,9 @@
         && postData.value.learnerbirthYear
         && postData.value.teachingLocation
         && postData.value.totalTeachingTime
-        && postData.value.totalTeachingUnit
+        && postData.value.totalTeachingTimeUnit
         && postData.value.teachingFee
-        && postData.value.teachingFreeUnit
+        && postData.value.teachingFeeUnit
         && postData.value.requestTeacherSex 
     }
 
@@ -411,8 +411,8 @@
                             <select 
                                 class="form-select js-choice border-0 bg-light" 
                                 aria-label=".form-select-sm" 
-                                v-model="postData.totalTeachingUnit"
-                                :class="{ 'is-invalid': isFormSubmitted && !postData.totalTeachingUnit }"
+                                v-model="postData.totalTeachingTimeUnit"
+                                :class="{ 'is-invalid': isFormSubmitted && !postData.totalTeachingTimeUnit }"
                             >
                                 <option value="" disabled selected>Đơn vị thời gian</option>
                                 <option>Buổi</option>
@@ -448,13 +448,13 @@
                             <select 
                             class="form-select js-choice border-0 bg-light" 
                             aria-label=".form-select-sm" 
-                            v-model="postData.teachingFreeUnit"
-                            :class="{ 'is-invalid': isFormSubmitted && !postData.teachingFreeUnit }"
+                            v-model="postData.teachingFeeUnit"
+                            :class="{ 'is-invalid': isFormSubmitted && !postData.teachingFeeUnit }"
                             >
                                 <option value="" selected disabled>Đơn vị thời gian</option>
-                                <option>Mỗi buổi</option>
-                                <option>Mỗi tuần</option>
-                                <option>Mỗi tháng</option>
+                                <option>Buổi</option>
+                                <option>Tuần</option>
+                                <option>Tháng</option>
                             </select>
                         </div>
                     </div>
