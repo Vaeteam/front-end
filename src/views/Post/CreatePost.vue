@@ -6,6 +6,8 @@
     import { emptyShift } from '@/interfaces/common.interface'
     import Calendar from 'primevue/calendar';
     import { commonStore } from '@/stores/common';
+    import type { TreeNode } from '@/interfaces/common.interface'
+
 
     const store = commonStore();
     let postData = ref({
@@ -31,7 +33,7 @@
         extraNote: ''
     });
 
-    const subjects = store.subjects;
+    const subjects = store.subjects as TreeNode[] | [];
     const validationMessage = ref('');
 
     const addRow = () => {
