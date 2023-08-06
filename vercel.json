@@ -1,19 +1,19 @@
 {
   "builds": [
-    { "src": "vue-app/package.json", "use": "@vercel/static-build", "config": { "buildCommand": "npm run build" } }
+    { "src": "front-end/package.json", "use": "@vercel/static-build", "config": { "buildCommand": "npm run build" } }
   ],
   "routes": [
     {
       "src": "/(.*.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot))$",
-      "dest": "vue-app/$1"
+      "dest": "front-end/$1"
     },
     {
       "src": "/(.*).html",
-      "dest": "vue-app/$1.html"
+      "dest": "front-end/$1.html"
     },
     {
       "src": "/(.*)",
-      "dest": "vue-app/index.html"
+      "dest": "front-end/index.html"
     }
   ]
 }
