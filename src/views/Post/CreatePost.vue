@@ -2,6 +2,7 @@
     import { ref } from 'vue';
     import TreeSelect from 'primevue/treeselect';
     import type { TreeNode } from 'primevue/tree/Tree';
+    import InputNumber from 'primevue/inputnumber';
     import PostService from "@/service/post.service";
     import { weekday, amountMonth, birthYears, yearOlds, educations, yearExperience } from '@/constants/common.constant'
     import { emptyShift } from '@/interfaces/common.interface'
@@ -25,7 +26,7 @@
         shifts: [{...emptyShift}],
         totalTeachingTime: '',
         totalTeachingTimeUnit: '',
-        teachingFee: '',
+        teachingFee: null,
         teachingFeeUnit: '',
         requestTeacherSex: '',
         requestTeacherAgeFrom: null,
@@ -47,15 +48,6 @@
         postData.value.shifts.splice(index, 1);
     };
 
-    function formatCurrency(event:any) {
-        const cleanedValue = event.target.value.replace(/\D/g, '');
-        const parsedValue = parseFloat(cleanedValue);
-        const formattedValue = parsedValue.toLocaleString('vi-VN', {
-            style: 'currency',
-            currency: 'VND',
-        });
-        postData.value.teachingFee = formattedValue;
-    }
 
     function validateAgeRange() {
         if (postData.value.requestTeacherAgeFrom && postData.value.requestTeacherAgeTo ) {
@@ -333,7 +325,7 @@
                         selectionMode="checkbox" 
                         :metaKeySelection="false" 
                         placeholder="Chọn môn học" 
-                        :class="['w-full md:w-20rem', { 'p-invalid': !isSubjectSelected }]" 
+                        :class="['w-100', { 'p-invalid': !isSubjectSelected }]" 
                     />
                 </div>
             </div>
@@ -434,15 +426,15 @@
                 <div class="col-lg-8">
                     <div class="row g-2 g-sm-4">
                         <div class="col-8">
-                            <input
-                                id="teachingFee"
-                                type="text" 
-                                class="form-control" 
+                            <InputNumber 
                                 v-model="postData.teachingFee" 
-                                @input="formatCurrency"
+                                inputId="currency-us" 
+                                mode="currency" 
+                                currency="VND" 
+                                locale="us-US"
                                 placeholder="Nhập học phí cho từng buổi, tuần hoặc tháng"
-                                :class="{ 'is-invalid': isFormSubmitted && !postData.teachingFee }"
-                            >
+                                :class="['w-100', { 'is-invalid': isFormSubmitted && !postData.teachingFee }]"
+                            />
                         </div>
                         <div class="col-4">
                             <select 
@@ -508,7 +500,7 @@
                                 type="radio" 
                                 name="requestAnyGender" 
                                 id="requestAnyGender" 
-                                value="any" 
+                                value="any"
                                 v-model="postData.requestTeacherSex"
                                 :class="{ 'is-invalid': isFormSubmitted && !postData.requestTeacherSex }"
                             >
