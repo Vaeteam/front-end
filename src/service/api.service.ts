@@ -1,14 +1,8 @@
-// src/services/api.ts
-
 import axios from 'axios';
 import type { AxiosInstance, InternalAxiosRequestConfig, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { useUserStore } from "@/stores/user";
 import { useRouter } from 'vue-router';
-
-
-interface ApiResponse extends AxiosResponse {
-  data: any;
-}
+import type { ApiResponse } from '@/interfaces/common.interface'
 
 class ApiService {
   private axiosInstance: AxiosInstance;

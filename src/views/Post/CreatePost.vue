@@ -1,19 +1,21 @@
 <script setup lang='ts'>
     import { ref } from 'vue';
     import TreeSelect from 'primevue/treeselect';
+    import Calendar from 'primevue/calendar';
     import type { TreeNode } from 'primevue/tree/Tree';
     import InputNumber from 'primevue/inputnumber';
+    import { useToast } from 'primevue/usetoast';
     import PostService from "@/service/post.service";
     import { weekday, amountMonth, birthYears, yearOlds, educations, yearExperience } from '@/constants/common.constant'
     import { emptyShift } from '@/interfaces/common.interface'
     import type { ShiftInterface } from '@/interfaces/common.interface'
-    import Calendar from 'primevue/calendar';
     import { commonStore } from '@/stores/common';
 
-
+    const toast = useToast();
     const store = commonStore();
     const isFormSubmitted = ref(false);
     const isSubjectSelected = ref(true);
+
     let postData = ref({
         learnerName: '',
         learnerSex: false,
@@ -47,7 +49,6 @@
     const removeRow = (index:number) => {
         postData.value.shifts.splice(index, 1);
     };
-
 
     function validateAgeRange() {
         if (postData.value.requestTeacherAgeFrom && postData.value.requestTeacherAgeTo ) {
@@ -94,6 +95,29 @@
         if (isFormValid()) {
             postData.value.subjects = subjectIds
             PostService.createPost(postData.value)
+            .then(
+                res => {
+                    toast.add(
+                    { 
+                        severity: 'success',
+                        summary: 'Bài Tìm Giáo Viên',
+                        detail: 'Bài của bạn đã được tạo thành công, hãy đợi các Giáo Viên ứng tuyển.',
+                        life: 3000 
+                    }
+                    );
+                }
+            ).catch(
+                err => {
+                    toast.add(
+                        { 
+                            severity: 'error',
+                            summary: 'Bài Tìm Giáo Viên',
+                            detail: 'Đã có lỗi xảy ra, vui lòng thử lại.',
+                            life: 3000 
+                        }
+                    );
+                }
+            )
         }
     }
 

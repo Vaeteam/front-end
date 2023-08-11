@@ -1,3 +1,7 @@
+import type { AxiosResponse } from 'axios';
+
+
+
 export interface TreeNode {
     key: number;
     label: string;
@@ -15,4 +19,10 @@ export const emptyShift: ShiftInterface = {
     weekday: '',
     startTime: '',
     endTime: ''
+}
+
+export interface ApiResponse extends AxiosResponse {
+    data: any;
+    message: string;
+    details: string;
 }

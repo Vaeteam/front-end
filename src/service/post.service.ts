@@ -1,4 +1,5 @@
 import type { PostInterface } from '@/interfaces/post.interface'
+import type { ApiResponse } from '@/interfaces/common.interface';
 import apiService from './api.service';
 
 class PostService {
@@ -14,9 +15,8 @@ class PostService {
         return mockup_data
     }
 
-    async createPost(payload:any) {
-        const response = await apiService.post('/post/create/', payload);
-        return response.data;
+    async createPost(payload:any): Promise<ApiResponse> {
+        return await apiService.post('/post/create/', payload);
     }
 }
 
