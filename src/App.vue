@@ -4,6 +4,7 @@
 </script>
 
 <template>
+  <Toast/>
   <RouterView></RouterView>
 </template>
 
