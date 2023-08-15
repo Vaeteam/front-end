@@ -4,7 +4,7 @@ import axios from 'axios';
 import type { AxiosInstance, InternalAxiosRequestConfig, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { useUserStore } from "@/stores/user";
 import { useRouter } from 'vue-router';
-
+import { app } from '@/main';
 
 interface ApiResponse extends AxiosResponse {
   data: any;
@@ -28,11 +28,32 @@ class ApiService {
   }
 
   private handleResponse<T>(response: AxiosResponse<T>): AxiosResponse<T> {
+    if (response.data) {
+      const { message, detail } = response.data as any;
+      if( message && detail ) {
+        let details = detail;
+        if (detail instanceof Array<string>) {
+          details = detail.join('\n');
+        }
+        app.config.globalProperties.$toast.add({ severity: 'success', summary: message, detail: details, life: 3000 });
+      }
+    }
     // Handle response, e.g., logging or data manipulation
     return response;
   }
 
   private handleError(error: any): Promise<any> {
+    // show toast when have message and detail
+    if (error.response.data) {
+      const { message, detail } = error.response.data;
+      if( message && detail ) {
+        let details = detail;
+        if (detail instanceof Array<string>) {
+          details = detail.join('\n');
+        }
+        app.config.globalProperties.$toast.add({ severity: 'error', summary: message, detail: details, life: 3000 });
+      }
+    }
     // Handle errors, e.g., logging or user notifications
     if(error.response.status === 401) {
       const userStore = useUserStore();
