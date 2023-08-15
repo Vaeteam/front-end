@@ -95,29 +95,6 @@
         if (isFormValid()) {
             postData.value.subjects = subjectIds
             PostService.createPost(postData.value)
-            .then(
-                res => {
-                    toast.add(
-                    { 
-                        severity: 'success',
-                        summary: 'Bài Tìm Giáo Viên',
-                        detail: 'Bài của bạn đã được tạo thành công, hãy đợi các Giáo Viên ứng tuyển.',
-                        life: 3000 
-                    }
-                    );
-                }
-            ).catch(
-                err => {
-                    toast.add(
-                        { 
-                            severity: 'error',
-                            summary: 'Bài Tìm Giáo Viên',
-                            detail: 'Đã có lỗi xảy ra, vui lòng thử lại.',
-                            life: 3000 
-                        }
-                    );
-                }
-            )
         }
     }
 
