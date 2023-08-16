@@ -23,10 +23,8 @@ export const useUserStore = defineStore({
         const { access_token, refresh_token } = JSON.parse(userLocal);
         state.access_token = access_token;
         state.refresh_token = refresh_token;
-
-        return true;
       }
-      return false;
+      return !!state.access_token;
     }
   },
   actions: {
