@@ -73,7 +73,7 @@
           </button>
 
           <!-- Logo START -->
-          <a class="navbar-brand" href="index.html">
+          <a class="navbar-brand" @click="changeRoute('/')">
             <img
               class="light-mode-item navbar-brand-item"
               src="../assets/images/logo.svg"
