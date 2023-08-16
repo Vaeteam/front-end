@@ -105,7 +105,7 @@
             <li v-for="(item, index) in navs" :key="index" class="nav-item">
               <a class="nav-link" @click="changeRoute(item.path)"> {{ item.name }} </a>
             </li>
-            <li class="nav-item" v-if="!isLogin">
+            <li class="nav-item" v-if="isExpand && !isLogin">
               <a class="nav-link" @click="changeRoute('/auth/login')"> Login </a>
             </li>
           </ul>
