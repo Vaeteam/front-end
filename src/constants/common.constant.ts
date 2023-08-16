@@ -2,7 +2,7 @@ export const weekday = [
     'Thứ Hai',
     'Thứ Ba',
     'Thứ Tư',
-    'Thứ năm',
+    'Thứ Năm',
     'Thứ Sáu',
     'Thứ Bảy',
     'Chủ Nhật',

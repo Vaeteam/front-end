@@ -5,8 +5,10 @@
     import { onMounted } from 'vue';
     
     const store = commonStore();
-    onMounted(() => {
-        store.fetchSubjects()
+    onMounted(async () => {
+        if(!store.subjects) {
+            await store.fetchSubjects()
+        }
     })
 </script>
 

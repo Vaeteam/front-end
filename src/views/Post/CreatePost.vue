@@ -4,17 +4,17 @@
     import Calendar from 'primevue/calendar';
     import type { TreeNode } from 'primevue/tree/Tree';
     import InputNumber from 'primevue/inputnumber';
-    import { useToast } from 'primevue/usetoast';
     import PostService from "@/service/post.service";
     import { weekday, amountMonth, birthYears, yearOlds, educations, yearExperience } from '@/constants/common.constant'
     import { emptyShift } from '@/interfaces/common.interface'
     import type { ShiftInterface } from '@/interfaces/common.interface'
     import { commonStore } from '@/stores/common';
+    import { useRouter } from "vue-router";
 
-    const toast = useToast();
     const store = commonStore();
     const isFormSubmitted = ref(false);
     const isSubjectSelected = ref(true);
+    const router = useRouter()
 
     let postData = ref({
         learnerName: '',
@@ -87,14 +87,17 @@
         && postData.value.requestTeacherSex 
     }
 
-    function handleSubmit() {
+    async function handleSubmit() {
         const subjectIds: string[] = Object.keys(postData.value.subjects)
         .filter((key) => postData.value.subjects[key].checked === true);
         isSubjectSelected.value = subjectIds.length > 0;
         isFormSubmitted.value = true;
         if (isFormValid()) {
             postData.value.subjects = subjectIds
-            PostService.createPost(postData.value)
+            const response = await PostService.createPost(postData.value);
+            if (response.status < 300) {
+                router.push('/');
+            }
         }
     }
 
@@ -589,7 +592,7 @@
         </div>
 
         <div class="col-12 text-sm-end">
-            <button class="btn btn-primary mb-0" type="submit">Submit</button>
+            <button class="btn btn-primary mb-0" type="submit">Tạo</button>
         </div>
     </form>
 </div>
