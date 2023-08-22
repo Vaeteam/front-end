@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-    import { ref } from 'vue';
+    import { computed, ref } from 'vue';
     import TreeSelect from 'primevue/treeselect';
     import Calendar from 'primevue/calendar';
     import type { TreeNode } from 'primevue/tree/Tree';
@@ -13,12 +13,8 @@
 
     const store = commonStore();
     const isFormSubmitted = ref(false);
-    const subjectSelected =  computed(() => {
-      return Object.keys(postData.value.subjects)
-        .filter((key, index) => postData.value.subjects[index].checked);
-    })
     const isSubjectSelected = computed(() => {
-      return subjectSelected.length > 0;
+      return postData.value.selected_subjects.length > 0;
     })
     const router = useRouter()
 
@@ -30,7 +26,7 @@
         learnerPhoneNumber: '',
         learnerLearningSchool: '',
         teachingLocation: '',
-        subjects: [] as string[],
+        selected_subjects: [] as TreeNode[],
         shifts: [{...emptyShift}],
         totalTeachingTime: '',
         totalTeachingTimeUnit: '',
@@ -57,19 +53,14 @@
     };
 
     function validateAgeRange() {
-        if (postData.value.requestTeacherAgeFrom && postData.value.requestTeacherAgeTo ) {
-            if (postData.value.requestTeacherAgeFrom >= postData.value.requestTeacherAgeTo) {
-                validationMessage.value = 'Tuổi bên trái phải nhỏ hơn Tuổi bên phải';
-                return false
-            } else {
-                validationMessage.value = '';
-                return true
-            }
-        } 
-        if (postData.value.requestTeacherAgeFrom || postData.value.requestTeacherAgeTo ) {
+        if (!postData.value.requestTeacherAgeFrom || !postData.value.requestTeacherAgeTo ) {
             validationMessage.value = 'Tuổi bên trái và tuổi bên phải phải được chọn cả 2';
                 return false
-        }
+        } else if (postData.value.requestTeacherAgeFrom >= postData.value.requestTeacherAgeTo) {
+            validationMessage.value = 'Tuổi bên trái phải nhỏ hơn Tuổi bên phải';
+            return false
+        } 
+        validationMessage.value = '';
         return true
     function validateAgeRange() {
         if (postData.value.requestTeacherAgeFrom || postData.value.requestTeacherAgeTo ) {
@@ -85,12 +76,11 @@
     }
 
     function isShiftValid(shift:ShiftInterface) {
-        return shift.weekday && shift.startTime && shift.endTime ? true : false
+        return shift.weekday && shift.startTime && shift.endTime
     }
 
-    function isFormValid() {
-        console.log(isSubjectSelected.value, validateAgeRange(), postData.value.shifts.every((shift) => isShiftValid(shift)))
-        return isSubjectSelected.value 
+    const isFormValid = computed(() => {
+        return isSubjectSelected 
         && validateAgeRange()
         && postData.value.shifts.every((shift) => isShiftValid(shift))
         && postData.value.learnerName 
@@ -102,19 +92,16 @@
         && postData.value.teachingFee
         && postData.value.teachingFeeUnit
         && postData.value.requestTeacherSex 
-    }
+    })
 
     async function handleSubmit() {
-        const subjectIds: string[] = Object.keys(postData.value.subjects)
-        .filter((key) => postData.value.subjects[key].checked === true);
-        isSubjectSelected.value = subjectIds.length > 0;
         isFormSubmitted.value = true;
-        if (isFormValid()) {
-            postData.value.subjects = subjectIds
-            const response = await PostService.createPost(postData.value);
-            if (response.status < 300) {
-                router.push('/');
-            }
+        if (!isFormValid) {
+            return
+        }
+        const response = await PostService.createPost(postData.value);
+        if (response.status < 300) {
+            router.push('/');
         }
     }
 
@@ -341,7 +328,7 @@
                 </div>
                 <div class="col-lg-8">
                     <TreeSelect 
-                        v-model="postData.subjects" 
+                        v-model="postData.selected_subjects" 
                         :options="subjects" 
                         selectionMode="checkbox" 
                         :metaKeySelection="false" 
