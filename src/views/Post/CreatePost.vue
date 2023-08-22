@@ -13,7 +13,13 @@
 
     const store = commonStore();
     const isFormSubmitted = ref(false);
-    const isSubjectSelected = ref(true);
+    const subjectSelected =  computed(() => {
+      return Object.keys(postData.value.subjects)
+        .filter((key, index) => postData.value.subjects[index].checked);
+    })
+    const isSubjectSelected = computed(() => {
+      return subjectSelected.length > 0;
+    })
     const router = useRouter()
 
     let postData = ref({
