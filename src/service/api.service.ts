@@ -71,7 +71,7 @@ class ApiService {
 }
 
 // Replace 'https://api.example.com' with your API base URL
-const baseURL = import.meta.env.VITE_API_URL;
+const baseURL = 'http://localhost:8000';
 const apiService = new ApiService(baseURL);
 
 export default apiService;
