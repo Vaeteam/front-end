@@ -62,17 +62,6 @@
         } 
         validationMessage.value = '';
         return true
-    function validateAgeRange() {
-        if (postData.value.requestTeacherAgeFrom || postData.value.requestTeacherAgeTo ) {
-            validationMessage.value = 'Tuổi bên trái và tuổi bên phải phải được chọn cả 2';
-                return false
-        }
-        if (postData.value.requestTeacherAgeFrom >= postData.value.requestTeacherAgeTo) {
-            validationMessage.value = 'Tuổi bên trái phải nhỏ hơn Tuổi bên phải';
-            return false
-        } 
-        validationMessage.value = '';
-        return true
     }
 
     function isShiftValid(shift:ShiftInterface) {
