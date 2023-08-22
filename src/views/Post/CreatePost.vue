@@ -362,7 +362,7 @@
                             id="calendar-endTime" 
                             v-model="shift.endTime" 
                             timeOnly 
-                            placeholder="kết thức lúc"
+                            placeholder="kết thúc lúc"
                             :class="{ 'p-invalid': isFormSubmitted && !isShiftValid(shift) }"
                             />
                         </div>
