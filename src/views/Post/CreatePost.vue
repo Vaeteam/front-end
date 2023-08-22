@@ -559,13 +559,13 @@
                     </div>
                     <div class="col-lg-4 me-4">
                         <select class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm" v-model="postData.requestTeacherWorkingExp">
-                            <option value="" disabled selected>Kinh Nghiệp Làm Việc</option>
+                            <option value="" disabled selected>Kinh Nghiệm Làm Việc</option>
                             <option v-for="workingexp in yearExperience" :key="workingexp" :value="workingexp">{{ workingexp }}</option>
                         </select>
                     </div>
                     <div class="col-lg-4">
                         <select class="form-select js-choice z-index-9 border-0 bg-light" aria-label=".form-select-sm" v-model="postData.requestTeacherTeachingExp">
-                            <option value="" disabled selected>Kinh Nghiệp Dạy học</option>
+                            <option value="" disabled selected>Kinh Nghiệm Dạy học</option>
                             <option v-for="teachingExp in yearExperience" :key="teachingExp" :value="teachingExp">{{ teachingExp }}</option>
                         </select>
                     </div>
