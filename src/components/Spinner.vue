@@ -1,10 +1,15 @@
 <script setup lang="ts">
   import ProgressSpinner from 'primevue/progressspinner';
+  import { computed } from 'vue';
+  import { commonStore } from '@/stores/common';
+
+  const useCommonStore = commonStore();
+  const isLoading = computed(() => useCommonStore.isLoading)
 </script>
 
 <template>
-  <div class="fullscreen-overlay"></div>
-  <div class="centered-content">
+  <div class="fullscreen-overlay" v-if="isLoading"></div>
+  <div class="centered-content" v-if="isLoading">
     <ProgressSpinner />
   </div>
 </template>
