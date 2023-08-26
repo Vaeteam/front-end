@@ -19,6 +19,9 @@ class ApiService {
 
   private handleRequest(config: InternalAxiosRequestConfig): InternalAxiosRequestConfig | Promise<InternalAxiosRequestConfig> {
     // Add any request modifications here, e.g., authentication headers
+    const userStore = useUserStore();
+    config.headers.Authorization = `Bearer ${userStore.access_token}`;
+    
     return config;
   }
 
