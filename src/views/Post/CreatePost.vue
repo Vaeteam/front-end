@@ -32,9 +32,9 @@
         learnerEmail: '',
         learnerPhoneNumber: '',
         learnerLearningSchool: '',
-        learnerProvice: '',
-        learnerDistrict: '',
-        learnerWard: '',
+        teachingProvince: '',
+        teachingDistrict: '',
+        teachingWard: '',
         learnerAddress: '',
         teachingLocation: '',
         selected_subjects: [] as TreeNode[],
@@ -85,24 +85,24 @@
         return shift.weekday && shift.startTime && shift.endTime
     }
 
-    const processLearnerProvice = computed( async () => {
-        if (postData.value.learnerProvice.id) {
-            administrativeDistricts.value = await commonService.getAdministrativeUnit(postData.value.learnerProvice.id);
+    const processteachingProvince = computed( async () => {
+        if (postData.value.teachingProvince.id) {
+            administrativeDistricts.value = await commonService.getAdministrativeUnit(postData.value.teachingProvince.id);
         };
     });
 
-    const processLearnerDistrict = computed( async () => {
-        if (postData.value.learnerDistrict.id) {
-            administrativeWards.value = await commonService.getAdministrativeUnit(postData.value.learnerDistrict.id);
+    const processteachingDistrict = computed( async () => {
+        if (postData.value.teachingDistrict.id) {
+            administrativeWards.value = await commonService.getAdministrativeUnit(postData.value.teachingDistrict.id);
         };
     });
 
 
     const isAddressValid = () => {
         return postData.value.teachingLocation.includes('learner_home')
-        && postData.value.learnerProvice
-        && postData.value.learnerDistrict
-        && postData.value.learnerWard
+        && postData.value.teachingProvince
+        && postData.value.teachingDistrict
+        && postData.value.teachingWard
         && postData.value.learnerAddress
     }
 
@@ -132,8 +132,8 @@
             router.push('/');
         }
     }
-    watch(processLearnerProvice, () => {});
-    watch(processLearnerDistrict, () => {});
+    watch(processteachingProvince, () => {});
+    watch(processteachingDistrict, () => {});
     watch(isFormValid, () => {});
 </script>
 
@@ -360,7 +360,7 @@
                     <div class="row">
                         <div class="col-lg-4">
                             <Dropdown 
-                                v-model="postData.learnerProvice" 
+                                v-model="postData.teachingProvince" 
                                 editable 
                                 :options="administrativeUnits" 
                                 optionLabel="name" 
@@ -368,9 +368,9 @@
                                 class="w-full md:w-14rem" 
                             />
                         </div>
-                        <div v-if="postData.learnerProvice" class="col-lg-4">
+                        <div v-if="postData.teachingProvince" class="col-lg-4">
                             <Dropdown 
-                                v-model="postData.learnerDistrict" 
+                                v-model="postData.teachingDistrict" 
                                 editable 
                                 :options="administrativeDistricts" 
                                 optionLabel="name" 
@@ -378,9 +378,9 @@
                                 class="w-full md:w-14rem" 
                             />
                         </div>
-                        <div v-if="postData.learnerDistrict" class="col-lg-4">
+                        <div v-if="postData.teachingDistrict" class="col-lg-4">
                             <Dropdown 
-                                v-model="postData.learnerWard" 
+                                v-model="postData.teachingWard" 
                                 editable 
                                 :options="administrativeWards" 
                                 optionLabel="name" 
@@ -389,7 +389,7 @@
                             />
                         </div>
                     </div>
-                    <div v-if="postData.learnerWard" class="mt-3">
+                    <div v-if="postData.teachingWard" class="mt-3">
                         <InputText 
                             v-model="postData.learnerAddress" 
                             type="text" 
