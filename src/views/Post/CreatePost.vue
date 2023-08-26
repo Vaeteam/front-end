@@ -1,17 +1,24 @@
 <script setup lang='ts'>
-    import { computed, ref } from 'vue';
+    import { computed, ref, watch, onMounted } from 'vue';
+    import { useRouter } from "vue-router";
+
+    import Dropdown from 'primevue/dropdown';
+    import InputNumber from 'primevue/inputnumber';
     import TreeSelect from 'primevue/treeselect';
     import Calendar from 'primevue/calendar';
+    import InputText from 'primevue/inputtext';
     import type { TreeNode } from 'primevue/tree/Tree';
-    import InputNumber from 'primevue/inputnumber';
+
     import PostService from "@/service/post.service";
     import { weekday, amountMonth, birthYears, yearOlds, educations, yearExperience } from '@/constants/common.constant'
     import { emptyShift } from '@/interfaces/common.interface'
-    import type { ShiftInterface } from '@/interfaces/common.interface'
+    import type { ShiftInterface, AdministrativeUnit } from '@/interfaces/common.interface'
     import { commonStore } from '@/stores/common';
-    import { useRouter } from "vue-router";
+    import commonService from '@/service/common.service';
+
 
     const store = commonStore();
+
     const isFormSubmitted = ref(false);
     const isSubjectSelected = computed(() => {
       return postData.value.selected_subjects.length > 0;
@@ -25,6 +32,10 @@
         learnerEmail: '',
         learnerPhoneNumber: '',
         learnerLearningSchool: '',
+        learnerProvice: '',
+        learnerDistrict: '',
+        learnerWard: '',
+        learnerAddress: '',
         teachingLocation: '',
         selected_subjects: [] as TreeNode[],
         shifts: [{...emptyShift}],
@@ -42,6 +53,9 @@
     });
 
     const subjects = store.subjects as TreeNode[];
+    const administrativeUnits = ref(store.administrativeUnits)
+    let administrativeDistricts = ref<AdministrativeUnit[]>([])
+    let administrativeWards = ref<AdministrativeUnit[]>([])
     const validationMessage = ref<string>('');
 
     const addRow = () => {
@@ -53,9 +67,12 @@
     };
 
     function validateAgeRange() {
-        if (!postData.value.requestTeacherAgeFrom || !postData.value.requestTeacherAgeTo ) {
+        if (!postData.value.requestTeacherAgeFrom && !postData.value.requestTeacherAgeTo) {
+            validationMessage.value = '';
+            return true
+        } else if (!postData.value.requestTeacherAgeFrom || !postData.value.requestTeacherAgeTo) {
             validationMessage.value = 'Tuổi bên trái và tuổi bên phải phải được chọn cả 2';
-                return false
+            return false
         } else if (postData.value.requestTeacherAgeFrom >= postData.value.requestTeacherAgeTo) {
             validationMessage.value = 'Tuổi bên trái phải nhỏ hơn Tuổi bên phải';
             return false
@@ -68,8 +85,30 @@
         return shift.weekday && shift.startTime && shift.endTime
     }
 
+    const processLearnerProvice = computed( async () => {
+        if (postData.value.learnerProvice.id) {
+            administrativeDistricts.value = await commonService.getAdministrativeUnit(postData.value.learnerProvice.id);
+        };
+    });
+
+    const processLearnerDistrict = computed( async () => {
+        if (postData.value.learnerDistrict.id) {
+            administrativeWards.value = await commonService.getAdministrativeUnit(postData.value.learnerDistrict.id);
+        };
+    });
+
+
+    const isAddressValid = () => {
+        return postData.value.teachingLocation.includes('learner_home')
+        && postData.value.learnerProvice
+        && postData.value.learnerDistrict
+        && postData.value.learnerWard
+        && postData.value.learnerAddress
+    }
+
     const isFormValid = computed(() => {
         return isSubjectSelected 
+        && isAddressValid()
         && validateAgeRange()
         && postData.value.shifts.every((shift) => isShiftValid(shift))
         && postData.value.learnerName 
@@ -93,7 +132,9 @@
             router.push('/');
         }
     }
-
+    watch(processLearnerProvice, () => {});
+    watch(processLearnerDistrict, () => {});
+    watch(isFormValid, () => {});
 </script>
 
 <template>
@@ -245,7 +286,7 @@
                                 class="form-check-input" 
                                 type="radio" 
                                 id="locationLearnerHome" 
-                                value="learner home"  
+                                value="learner_home"  
                                 v-model="postData.teachingLocation"
                                 :class="{ 'is-invalid': isFormSubmitted && !postData.teachingLocation }"
                             >
@@ -258,7 +299,7 @@
                                 class="form-check-input" 
                                 type="radio" 
                                 id="locationTeacherHome" 
-                                value="teacher home" 
+                                value="teacher_home" 
                                 v-model="postData.teachingLocation"
                                 :class="{ 'is-invalid': isFormSubmitted && !postData.teachingLocation }"
                             >
@@ -284,7 +325,7 @@
                                 class="form-check-input" 
                                 type="radio" 
                                 id="locationTeacherHomeHybrid" 
-                                value="teacher home hibrid" 
+                                value="teacher_home_hibrid" 
                                 v-model="postData.teachingLocation"
                                 :class="{ 'is-invalid': isFormSubmitted && !postData.teachingLocation }"
                             >
@@ -297,7 +338,7 @@
                                 class="form-check-input" 
                                 type="radio" 
                                 id="locationLeanerHomeHybrid" 
-                                value="leaner home hibrid" 
+                                value="learner_home_hibrid" 
                                 v-model="postData.teachingLocation"
                                 :class="{ 'is-invalid': isFormSubmitted && !postData.teachingLocation }"
                             >
@@ -305,6 +346,56 @@
                                 Dạy online và tại nhà học viên
                             </label>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div v-if="postData.teachingLocation.includes('learner_home')" class="col-12">
+            <div class="row g-xl-0 justify-content-start">
+                <div class="col-lg-4">
+                    <h6 class="mb-lg-0">Địa chỉ dạy học</h6>
+                </div>
+                <div class="col-lg-8">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <Dropdown 
+                                v-model="postData.learnerProvice" 
+                                editable 
+                                :options="administrativeUnits" 
+                                optionLabel="name" 
+                                placeholder="Nhập tỉnh/thành phố" 
+                                class="w-full md:w-14rem" 
+                            />
+                        </div>
+                        <div v-if="postData.learnerProvice" class="col-lg-4">
+                            <Dropdown 
+                                v-model="postData.learnerDistrict" 
+                                editable 
+                                :options="administrativeDistricts" 
+                                optionLabel="name" 
+                                placeholder="Nhập huyện/quận" 
+                                class="w-full md:w-14rem" 
+                            />
+                        </div>
+                        <div v-if="postData.learnerDistrict" class="col-lg-4">
+                            <Dropdown 
+                                v-model="postData.learnerWard" 
+                                editable 
+                                :options="administrativeWards" 
+                                optionLabel="name" 
+                                placeholder="Nhập huyện/quận" 
+                                class="w-full md:w-14rem" 
+                            />
+                        </div>
+                    </div>
+                    <div v-if="postData.learnerWard" class="mt-3">
+                        <InputText 
+                            v-model="postData.learnerAddress" 
+                            type="text" 
+                            placeholder="Địa chỉ nhà"
+                            class="w-100"
+                        />
                     </div>
                 </div>
             </div>

@@ -1,6 +1,17 @@
 <script setup lang="ts">
     import router from "@/router/index";
-
+    import { commonStore } from '@/stores/common';
+    import { onMounted } from 'vue';
+    
+    const store = commonStore();
+    onMounted(async () => {
+        if(store.subjects.length === 0) {
+            await store.fetchSubjects()
+        }
+        if(store.administrativeUnits.length === 0) {
+            await store.fetchAdministrativeUnit(0)
+        }
+    })
     const navigateToCreatePostPage = () => {
         router.push({name: "create-post"});
     };

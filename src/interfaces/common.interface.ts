@@ -26,3 +26,12 @@ export interface ApiResponse extends AxiosResponse {
     message: string;
     details: string;
 }
+
+export interface AdministrativeUnit {
+    id: number;
+    name : string;
+    codename : string;
+    code : number;
+    division_type : number;
+    root : number;
+}
