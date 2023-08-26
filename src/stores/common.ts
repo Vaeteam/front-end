@@ -7,6 +7,7 @@ export const commonStore = defineStore('common', {
     state: () => ({
         subjects: [] as TreeNode[],
         administrativeUnits: [] as AdministrativeUnit[],
+        isLoading: false,
     }),
     actions: {
         async fetchSubjects() {
@@ -17,5 +18,9 @@ export const commonStore = defineStore('common', {
             const administrativeUnits: AdministrativeUnit[] = await CommonService.getAdministrativeUnit(pk);
             this.administrativeUnits = administrativeUnits;
         },
+        
+        loading(isLoading: boolean) {
+            this.isLoading = isLoading;
+        }
     },
 });
