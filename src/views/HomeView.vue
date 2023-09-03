@@ -1,13 +1,6 @@
 <script setup lang="ts">
     import ListPost from "../components/ListPost.vue";
     import PostFilter from "../components/PostFilter.vue";
-    import { commonStore } from '@/stores/common';
-    import { onMounted } from 'vue';
-    
-    const store = commonStore();
-    onMounted(() => {
-        store.fetchSubjects()
-    })
 </script>
 
 <template>

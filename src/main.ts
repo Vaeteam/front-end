@@ -1,9 +1,11 @@
+import "primevue/resources/themes/lara-light-indigo/theme.css";
+import 'primevue/resources/themes/saga-blue/theme.css';
+import "primevue/resources/primevue.min.css";
+import 'primeicons/primeicons.css';
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 import PrimeVue from 'primevue/config';
 import FontAwesomeIcon from './font/fontawesome';
-import "primevue/resources/themes/lara-light-indigo/theme.css";
-import "primevue/resources/primevue.min.css";
 import vue3GoogleLogin from 'vue3-google-login';
 import ToastService from 'primevue/toastservice'
 import Toast from "primevue/toast";

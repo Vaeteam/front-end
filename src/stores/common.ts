@@ -1,10 +1,12 @@
+import type { TreeNode } from 'primevue/tree/Tree';
+import type { AdministrativeUnit } from '@/interfaces/common.interface'
 import { defineStore } from 'pinia';
-import type { TreeNode } from '@/interfaces/common.interface'
 import CommonService from "@/service/common.service"; 
 
 export const commonStore = defineStore('common', {
     state: () => ({
-        subjects: null as TreeNode[] | null,
+        subjects: [] as TreeNode[],
+        administrativeUnits: [] as AdministrativeUnit[],
         isLoading: false,
     }),
     actions: {
@@ -12,6 +14,11 @@ export const commonStore = defineStore('common', {
             const subjects: TreeNode[] = await CommonService.getCourses();
             this.subjects = subjects;
         },
+        async fetchAdministrativeUnit(pk: number) {
+            const administrativeUnits: AdministrativeUnit[] = await CommonService.getAdministrativeUnit(pk);
+            this.administrativeUnits = administrativeUnits;
+        },
+        
         loading(isLoading: boolean) {
             this.isLoading = isLoading;
         }

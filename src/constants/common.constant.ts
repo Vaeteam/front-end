@@ -21,6 +21,4 @@ export const yearOlds = getRangeArray(18, 97);
 
 export const educations = ['Tốt nghiệp lớp 12', 'Sinh Viên', 'Cử Nhân/Kỹ Sư', 'Học Viên Cao Học','Thạc Sĩ', 'Tiến Sĩ', 'Phó Giáo Sư', 'Giáo Sư']
 
-export const workingExperience = ['1 Năm', '2 Năm', '3 Năm', '4 Năm', '5 Năm', 'Nhiều Hơn 6 Năm']
-
-export const teachingExperience = ['1 Năm', '2 Năm', '3 Năm', '4 Năm', '5 Năm', 'Nhiều Hơn 6 Năm']
+export const yearExperience = ['1 năm', '2 năm', '3 năm', '4 năm', '5 năm', 'Trên 5 năm']

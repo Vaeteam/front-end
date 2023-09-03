@@ -1,15 +1,10 @@
-// src/services/api.ts
-
 import axios from 'axios';
 import type { AxiosInstance, InternalAxiosRequestConfig, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { useUserStore } from "@/stores/user";
 import { useRouter } from 'vue-router';
+import type { ApiResponse } from '@/interfaces/common.interface'
 import { commonStore } from '@/stores/common';
 import { app } from '@/main';
-
-interface ApiResponse extends AxiosResponse {
-  data: any;
-}
 
 class ApiService {
   private axiosInstance: AxiosInstance;
@@ -100,7 +95,7 @@ class ApiService {
 }
 
 // Replace 'https://api.example.com' with your API base URL
-const baseURL = import.meta.env.VITE_API_URL;
+const baseURL = 'http://localhost:8000';
 const apiService = new ApiService(baseURL);
 
 export default apiService;
