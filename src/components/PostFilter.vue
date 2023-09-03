@@ -19,7 +19,7 @@
 
 <template>
     <!-- Right sidebar START -->
-    <div class="col-lg-3 col-xxl-4">
+    <div class="col-3">
         <!-- Responsive offcanvas body START -->
         <nav class="navbar navbar-light navbar-expand-xl mx-0">
             <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">

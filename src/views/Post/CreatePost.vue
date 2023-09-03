@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-    import { computed, ref, watch, onMounted } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { useRouter } from "vue-router";
 
     import Dropdown from 'primevue/dropdown';
