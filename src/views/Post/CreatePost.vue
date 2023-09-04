@@ -384,7 +384,7 @@
                                 editable 
                                 :options="administrativeWards" 
                                 optionLabel="name" 
-                                placeholder="Nhập huyện/quận" 
+                                placeholder="Nhập xã/phường" 
                                 class="w-full md:w-14rem" 
                             />
                         </div>
@@ -453,7 +453,7 @@
                             id="calendar-endTime" 
                             v-model="shift.endTime" 
                             timeOnly 
-                            placeholder="kết thúc lúc"
+                            placeholder="Kết thúc lúc"
                             :class="{ 'p-invalid': isFormSubmitted && !isShiftValid(shift) }"
                             />
                         </div>
