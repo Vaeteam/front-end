@@ -1,3 +1,5 @@
+import type { PostFilterInterface } from '@/interfaces/post.interface'
+
 export const weekday = [
     'Thứ Hai',
     'Thứ Ba',
@@ -22,3 +24,16 @@ export const yearOlds = getRangeArray(18, 97);
 export const educations = ['Tốt nghiệp lớp 12', 'Sinh Viên', 'Cử Nhân/Kỹ Sư', 'Học Viên Cao Học','Thạc Sĩ', 'Tiến Sĩ', 'Phó Giáo Sư', 'Giáo Sư']
 
 export const yearExperience = ['1 năm', '2 năm', '3 năm', '4 năm', '5 năm', 'Trên 5 năm']
+
+export const objectToQueryString = (obj: PostFilterInterface) => {
+  const queryParams = [];
+
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key) && obj[key]) {
+      queryParams.push(`${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`);
+    }
+  }
+
+  return queryParams.join('&');
+}
+

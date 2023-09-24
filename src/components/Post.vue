@@ -1,66 +1,89 @@
 <script setup lang="ts">
-    import { defineProps } from 'vue';
-    import type { PostInterface } from '@/interfaces/post.interface'
+    // import type { PostInterface } from '@/interfaces/post.interface'
 
     const pros = defineProps<{
-        post: PostInterface
+        postDetail: any;
+        teachingProvince: any;
+        teachingDistrict: any;
+        teachingWard: any;
+        teachers: any;
+        subjects: any;
+        rangeTimes: any;
     }>() 
 </script>
 
 <template>
-    <!-- Card list START -->
-    <div class="col-12">
-    <div class="card shadow overflow-hidden p-2">
-        <div class="row g-0">
-            <div class="col-md-5 overflow-hidden">
-                <img src="@/assets/images/courses/4by3/06.jpg" class="rounded-2" alt="Card image">
-                <!-- Ribbon -->
-                <div class="card-img-overlay">
-                    <div class="ribbon"><span>Free</span></div>
+    <div class="col-12 mb-4">
+        <div class="card rounded overflow-hidden shadow">
+            <div class="row g-0">
+                <!-- Image -->
+                <div class="col-4">
+                    <img src="@/assets/images/courses/4by3/03.jpg" alt="card image">
                 </div>
-            </div>
-            <div class="col-md-7">
-                <div class="card-body">
-                    <!-- Badge and rating -->
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <!-- Badge -->
-                        <a href="#" class="badge bg-primary text-white mb-2 mb-sm-0">Development</a>
-                        <!-- Rating and wishlist -->
-                        <div>
-                            <span class="h6 fw-light me-3"><i class="fas fa-star text-warning me-1"></i>4.5</span>
-                            <a href="#" class="text-danger"><i class="fas fa-heart"></i></a>
+
+                <!-- Card body -->
+                <div class="col-8">
+                    <div class="card-body">
+                        <!-- subjects -->
+                        <div class="d-flex justify-content-start mb-3">
+                            <a 
+                                class="badge bg-success bg-opacity-10 text-success border border-success fs-6 me-3"
+                                v-for="(subject, index) in subjects" :key="index"
+                            >{{subject.name}}</a>
                         </div>
-                    </div>
-
-                    <!-- Title -->
-                    <h5 class="card-title"><a href="#">{{ pros.post.title }}</a></h5>
-                    <p class="text-truncate-2 d-none d-lg-block">Satisfied conveying a dependent contented he gentleman agreeable do be. dependent contented he</p>
-
-                    <!-- Info -->
-                    <ul class="list-inline">
-                        <li class="list-inline-item h6 fw-light mb-1 mb-sm-0"><i class="far fa-clock text-danger me-2"></i>21h 56m</li>
-                        <li class="list-inline-item h6 fw-light mb-1 mb-sm-0"><i class="fas fa-table text-orange me-2"></i>52 lectures</li>
-                        <li class="list-inline-item h6 fw-light"><i class="fas fa-signal text-success me-2"></i>Intermediate</li>
-                    </ul>
-
-                    <!-- Price and avatar -->
-                    <div class="d-sm-flex justify-content-sm-between align-items-center">
-                        <!-- Avatar -->
-                        <div class="d-flex align-items-center">
-                            <div class="avatar">
-                                <img class="avatar-img rounded-circle" src="@/assets/images/avatar/06.jpg" alt="avatar">
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <!-- learner name -->
+                                <div class="d-flex justify-content-between mb-2">
+                                    <h5 class="card-title mb-0 fs-4">{{ postDetail.learner_name }}</h5>
+                                </div>
+                                <!-- Address -->
+                                <div class="mb-2">
+                                    <span class="fs-6">{{ postDetail.teaching_address }}, </span>
+                                    <span class="fs-6">{{ teachingWard?.name }}, </span>
+                                    <span class="fs-6">{{ teachingDistrict?.name }}, </span>
+                                    <span class="fs-6">{{ teachingProvince?.name }}</span>
+                                </div>
                             </div>
-                            <p class="mb-0 ms-2"><a href="#" class="h6 fw-light">Jacqueline Miller</a></p>
+                            <!-- Fee -->
+                            <div class="col-6">
+                                <label class="badge bg-success bg-opacity-10 text-success w-100 h-75 d-flex justify-content-center border border-success">
+                                    <span class="d-flex align-items-center">
+                                        <span class="text-success mb-0 h4 me-3 ">{{ postDetail.teaching_fee }}đ</span>
+                                        <span class="badge bg-dark text-white">{{ postDetail.teaching_fee_unit }}</span>
+                                    </span>
+                                </label>
+                            </div>
                         </div>
-                        <!-- Price -->
-                        <div class="mt-3 mt-sm-0">
-                            <a href="#" class="btn btn-dark">View more</a>    
-                        </div>                  
+                        <div class="row">
+                            <ul 
+                                class="col-6 d-flex align-items-center list-inline mb-0 avatar-group"
+                                v-if="teachers.length > 0"
+                            >
+                                <li class="avatar" v-for="(teacher, index) in teachers" :key="index">
+                                    <img class="avatar-img rounded-circle" src="@/assets/images/avatar/01.jpg" alt="avatar">
+                                </li>
+                                <li> 
+                                    <span class="badge ms-3 fs-6 bg-success bg-opacity-10 text-success border border-success">{{ teachers.length }}+</span>
+                                </li>
+                            </ul>
+                            <ul
+                                class="col-6 d-flex align-items-center list-inline mb-0 avatar-group"
+                                v-else
+                            >
+                                <li> 
+                                    <span class="badge ms-3 fs-6 text-bg-warning ">Hãy là người đầu tiên ứng tuyển.</span>
+                                </li>
+                            </ul>
+                            <div class="col-6 d-flex justify-content-end">
+                                <a class="btn btn-success-soft me-2" href="#">Ứng tuyển</a>
+                                <a class="btn btn-info-soft" href="#">Xem Chi Tiết</a>
+                            </div>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<!-- Card list END -->
 </template>

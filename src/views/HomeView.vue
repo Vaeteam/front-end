@@ -8,7 +8,7 @@
         <div class="container">
             <div class="row">
                 <ListPost/>
-                <PostFilter/>
+                <PostFilter />
             </div>
         </div>
     </section>

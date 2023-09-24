@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-    import { computed, ref, watch, onMounted } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { useRouter } from "vue-router";
 
     import Dropdown from 'primevue/dropdown';
@@ -384,7 +384,7 @@
                                 editable 
                                 :options="administrativeWards" 
                                 optionLabel="name" 
-                                placeholder="Nhập huyện/quận" 
+                                placeholder="Nhập xã/phường" 
                                 class="w-full md:w-14rem" 
                             />
                         </div>
@@ -453,7 +453,7 @@
                             id="calendar-endTime" 
                             v-model="shift.endTime" 
                             timeOnly 
-                            placeholder="kết thúc lúc"
+                            placeholder="Kết thúc lúc"
                             :class="{ 'p-invalid': isFormSubmitted && !isShiftValid(shift) }"
                             />
                         </div>
